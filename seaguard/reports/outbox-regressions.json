@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-24T08:20:59.036Z",
+  "tests": [
+    {
+      "name": "301 pending alerts are all retained (no loss when backlog exceeds the history window)",
+      "passed": true
+    },
+    {
+      "name": "mixed delivered/failed history sheds oldest terminal first, never pending",
+      "passed": true
+    },
+    {
+      "name": "a response that transitions SENDING->DELIVERED then new alerts prune terminal not pending",
+      "passed": true
+    },
+    {
+      "name": "test alerts created in the same paused second keep distinct IDs",
+      "passed": true
+    },
+    {
+      "name": "notification timeouts still obey the retry limit (existing semantics intact)",
+      "passed": true
+    },
+    {
+      "name": "a pending backlog under the window coexists with full terminal history (total capped at 300)",
+      "passed": true
+    },
+    {
+      "name": "real notify branch: enqueuing a 301st alert keeps the oldest pending (no loss)",
+      "passed": true
+    },
+    {
+      "name": "baseline: the old notifier drops the oldest pending on the 301st alert",
+      "passed": true
+    },
+    {
+      "name": "overflow warns once, does not spam on repeats, and clears the flag on recovery",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "at": "2026-10-24T08:25:54.596Z",
+  "runs": [
+    {
+      "scenario": "FLOODING",
+      "passed": true,
+      "simTime": 200,
+      "results": {
+        "scenario": "FLOODING",
+        "resolved": true,
+        "crewSafe": true,
+        "vesselSafe": true,
+        "allClear": true,
+        "delays": {
+          "detectionS": 0,
+          "acknowledgementS": 60,
+          "dispatchS": 0,
+          "arrivalS": 54,
+          "repairS": 60,
+          "resolutionS": 114
+        },
+        "crew": {
+          "onboard": 3,
+          "rescued": 3
+        },
+        "water": {
+          "levelL": 29.999999999999943,
+          "ingressLpm": 0
+        },
+        "radio": null,
+        "repair": {
+          "done": true,
+          "doneAt": 120
+        },
+        "returnSafe": null,
+        "helpers": {
+          "dispatches": 0
+        },
+        "relay": {
+          "delivered": 0,
+          "dropped": 0
+        }
+      }
+    },
+    {
+      "scenario": "MAN_OVERBOARD",
+      "passed": true,
+      "simTime": 240,
+      "results": {
+        "scenario": "MAN_OVERBOARD",
+        "resolved": true,
+        "crewSafe": true,
+        "vesselSafe": true,
+        "allClear": true,
+        "delays": {
+          "detectionS": 0,
+          "acknowledgementS": 100,
+          "dispatchS": 0,
+          "arrivalS": 87,
+          "repairS": null,
+          "resolutionS": 127
+        },
+        "crew": {
+          "onboard": 2,
+          "rescued": 2
+        },
+        "water": {
+          "levelL": 0,
+          "ingressLpm": 0
+        },
+        "radio": null,
+        "repair": null,
+        "returnSafe": null,
+        "helpers": {
+          "dispatches": 0
+        },
+        "relay": {
+          "delivered": 0,
+          "dropped": 0
+        }
+      }
+    },
+    {
+      "scenario": "RADIO_FAILURE",
+      "passed": true,
+      "simTime": 340,
+      "results": {
+        "scenario": "RADIO_FAILURE",
+        "resolved": true,
+        "crewSafe": true,
+        "vesselSafe": true,
+        "allClear": true,
+        "delays": {
+          "detectionS": 0,
+          "acknowledgementS": 120,
+          "dispatchS": 0,
+          "arrivalS": 108,
+          "repairS": null,
+          "resolutionS": 216
+        },
+        "crew": {
+          "onboard": 2,
+          "rescued": 2
+        },
+        "water": {
+          "levelL": 0,
+          "ingressLpm": 0
+        },
+        "radio": {
+          "restored": true,
+          "restoredAt": 210
+        },
+        "repair": null,
+        "returnSafe": null,
+        "helpers": {
+          "dispatches": 0
+        },
+        "relay": {
+          "delivered": 0,
+          "dropped": 0
+        }
+      }
+    },
+    {
+      "scenario": "BOUNDARY_APPROACH",
+      "passed": true,
+      "simTime": 340,
+      "results": {
+        "scenario": "BOUNDARY_APPROACH",
+        "resolved": true,
+        "crewSafe": true,
+        "vesselSafe": true,
+        "allClear": true,
+        "delays": {
+          "detectionS": 0,
+          "acknowledgementS": 140,
+          "dispatchS": 0,
+          "arrivalS": 130,
+          "repairS": null,
+          "resolutionS": 170
+        },
+        "crew": {
+          "onboard": 2,
+          "rescued": 2
+        },
+        "water": {
+          "levelL": 0,
+          "ingressLpm": 0
+        },
+        "radio": null,
+        "repair": null,
+        "returnSafe": {
+          "done": true,
+          "doneAt": 200
+        },
+        "helpers": {
+          "dispatches": 0
+        },
+        "relay": {
+          "delivered": 0,
+          "dropped": 0
+        }
+      }
+    }
+  ]
+}

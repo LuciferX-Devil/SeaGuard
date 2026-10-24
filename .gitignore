@@ -8,3 +8,5 @@ seaguard/data/*
 userdir/.config*
 userdir/lib/
 *.zip
+seaguard/tests/fixtures/temp/
+seaguard/tests/fixtures/battery-state/

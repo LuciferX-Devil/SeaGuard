@@ -1,0 +1,103 @@
+{
+  "at": "2026-10-24T08:20:58.926Z",
+  "module": "seaguard/src/rescue/persistence.cjs",
+  "handlers": [
+    "seaguard/src/functions/fnRescue.js",
+    "seaguard/src/functions/fnRescueApi.js"
+  ],
+  "tempDir": "seaguard/tests/fixtures/temp",
+  "tests": [
+    {
+      "name": "save/load roundtrip: en-route mission is preserved",
+      "passed": true
+    },
+    {
+      "name": "save/load roundtrip: pending commands and outage are preserved",
+      "passed": true
+    },
+    {
+      "name": "save/load roundtrip: on-scene hull repair progress is preserved",
+      "passed": true
+    },
+    {
+      "name": "restoreOnce: restores a paused world into an empty flow and it resumes",
+      "passed": true
+    },
+    {
+      "name": "restoreOnce: never overwrites a live world already in the flow",
+      "passed": true
+    },
+    {
+      "name": "deterministic resume: paused restore reaches the same result as uninterrupted",
+      "passed": true
+    },
+    {
+      "name": "corrupt primary: load recovers the previous-good backup",
+      "passed": true
+    },
+    {
+      "name": "truncated primary: load recovers the previous-good backup",
+      "passed": true
+    },
+    {
+      "name": "corrupt primary AND backup: load reports a clean error (no throw)",
+      "passed": true
+    },
+    {
+      "name": "invalid snapshot version is rejected on load",
+      "passed": true
+    },
+    {
+      "name": "a wrong MODEL version (not the exact supported one) is rejected on load",
+      "passed": true
+    },
+    {
+      "name": "invalid mission (unknown team) is rejected on load",
+      "passed": true
+    },
+    {
+      "name": "invalid resource allocation (available > total kits) is rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid team status and NaN-free numeric fields are enforced",
+      "passed": true
+    },
+    {
+      "name": "an invalid world cannot replace a good snapshot (temp never wins)",
+      "passed": true
+    },
+    {
+      "name": "save is atomic: a good snapshot is always present and valid after writes",
+      "passed": true
+    },
+    {
+      "name": "save/load roundtrip: sensor-delivered incident fields (lastWater/lastCrew) survive",
+      "passed": true
+    },
+    {
+      "name": "a cyclic world is refused cleanly (no crash, good snapshot untouched)",
+      "passed": true
+    },
+    {
+      "name": "corrupt primary -> load backup -> save restored -> corrupt primary again still recovers backup",
+      "passed": true
+    },
+    {
+      "name": "fnRescue: a command persists the shared world (save path)",
+      "passed": true
+    },
+    {
+      "name": "fnRescue: explicit save action writes a checkpoint; tick saves every ~5 ticks",
+      "passed": true
+    },
+    {
+      "name": "fnRescueApi: GET carries save status; save/load actions work",
+      "passed": true
+    },
+    {
+      "name": "fnRescue: a restart (fresh flow) restores a paused world from the store",
+      "passed": true
+    }
+  ]
+}

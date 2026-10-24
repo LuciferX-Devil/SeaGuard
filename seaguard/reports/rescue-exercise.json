@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-24T08:20:58.839Z",
+  "module": "seaguard/src/rescue/exercise.cjs",
+  "handler": "seaguard/src/functions/fnRescue.js",
+  "tests": [
+    {
+      "name": "start validates scenario and rejects a second start without reset",
+      "passed": true
+    },
+    {
+      "name": "pause/resume/speed: the exercise clock is independent and bounded",
+      "passed": true
+    },
+    {
+      "name": "FLOODING: undersized pump, repair stops ingress, crew safety distinct from vessel safety",
+      "passed": true
+    },
+    {
+      "name": "MAN_OVERBOARD: kit-gated crew recovery, sensor-confirmed resolution",
+      "passed": true
+    },
+    {
+      "name": "RADIO_FAILURE: radio down from start, delayed on-scene repair, reports arrive after restore",
+      "passed": true
+    },
+    {
+      "name": "BOUNDARY_APPROACH: cumulative drift, delayed 60s return motion, not treated as flooding",
+      "passed": true
+    },
+    {
+      "name": "dispatch/reinforce/command validation and no double booking through the controller",
+      "passed": true
+    },
+    {
+      "name": "determinism: two identical exercise runs produce identical views",
+      "passed": true
+    },
+    {
+      "name": "fnRescue.js: initialize creates shared flow state; tick advances; cmd start/dispatch works; errors surfaced",
+      "passed": true
+    },
+    {
+      "name": "fnRescueApi.js: GET/POST share the same flow rescueWorld as the fnRescue node (different node contexts)",
+      "passed": true
+    },
+    {
+      "name": "build.mjs validation: missing ui-page ui reference is rejected",
+      "passed": true
+    }
+  ]
+}

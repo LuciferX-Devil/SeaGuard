@@ -1,0 +1,117 @@
+{
+  "at": "2026-10-24T08:20:59.003Z",
+  "tests": [
+    {
+      "name": "seed zero remains replayable in campaign status",
+      "passed": true
+    },
+    {
+      "name": "invalid seed rejected without emitting a run command",
+      "passed": true
+    },
+    {
+      "name": "out of range seed rejected",
+      "passed": true
+    },
+    {
+      "name": "fractional seed rejected",
+      "passed": true
+    },
+    {
+      "name": "negative speed rejected",
+      "passed": true
+    },
+    {
+      "name": "non-finite speed rejected",
+      "passed": true
+    },
+    {
+      "name": "valid zero seed emits the same seed",
+      "passed": true
+    },
+    {
+      "name": "running campaigns cannot be overwritten by a second API start",
+      "passed": true
+    },
+    {
+      "name": "sync rejects unknown boat before touching storage",
+      "passed": true
+    },
+    {
+      "name": "sync validates entire batch atomically",
+      "passed": true
+    },
+    {
+      "name": "sync rejects out of range coordinates",
+      "passed": true
+    },
+    {
+      "name": "sync rejects non-array record collections",
+      "passed": true
+    },
+    {
+      "name": "sync rejects oversized batches",
+      "passed": true
+    },
+    {
+      "name": "sync stale epoch returns conflict without storage mutation",
+      "passed": true
+    },
+    {
+      "name": "sync absorbs a repeated batch once and acknowledges a gap only when filled",
+      "passed": true
+    },
+    {
+      "name": "conflicting retransmission is rejected instead of silently corrupting position",
+      "passed": true
+    },
+    {
+      "name": "shore rejects malformed sequence before accounting loop",
+      "passed": true
+    },
+    {
+      "name": "shore rejects unknown vessel identity",
+      "passed": true
+    },
+    {
+      "name": "large sequence gaps keep recovery memory bounded",
+      "passed": true
+    },
+    {
+      "name": "duplicates remain harmless after the recent ID cache is evicted",
+      "passed": true
+    },
+    {
+      "name": "an acknowledgement outside the sent log range cannot erase onboard records",
+      "passed": true
+    },
+    {
+      "name": "test alerts created in the same paused second have unique response IDs",
+      "passed": true
+    },
+    {
+      "name": "notification timeouts obey the retry limit instead of retrying forever",
+      "passed": true
+    },
+    {
+      "name": "capsize is debounced and latched instead of alarming every sample",
+      "passed": true
+    },
+    {
+      "name": "a short wave roll is filtered without a capsize event",
+      "passed": true
+    },
+    {
+      "name": "flooding needs three sustained high-water samples",
+      "passed": true
+    },
+    {
+      "name": "crew tag loss alarms at eight samples, not before",
+      "passed": true
+    },
+    {
+      "name": "a late telemetry position never overwrites a newer fix",
+      "passed": true
+    }
+  ]
+}

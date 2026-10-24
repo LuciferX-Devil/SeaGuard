@@ -1,2 +1,7 @@
+// Fail rather than silently borrow dependencies from a development parent folder.
+const Module=require('module');const demoPath=require('path');const demoRoot=demoPath.resolve(__dirname,'..');
+const within=p=>typeof p!=='string'||!demoPath.isAbsolute(p)||p.toLowerCase().startsWith(demoRoot.toLowerCase()+demoPath.sep);
+for(const p of Object.keys(require.cache))if(!within(p))throw Error('Non-portable dependency: '+p);
+const resolve=Module._resolveFilename;Module._resolveFilename=function(...a){const p=resolve.apply(this,a);if(!within(p))throw Error('Non-portable dependency: '+p);return p;};
 const path=require('path');
 module.exports={uiHost:'127.0.0.1',uiPort:Number(process.env.SEAGUARD_PORT||1880),flowFile:path.join(__dirname,'flows.json'),logging:{console:{level:'info'}},functionGlobalContext:{rescue:require('./src/rescue/exercise.cjs'),rescueStore:require('./src/rescue/persistence.cjs').createStore({dataDir:path.join(__dirname,'data')})}};

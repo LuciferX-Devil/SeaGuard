@@ -1,0 +1,1614 @@
+{
+  "at": "2026-10-24T08:32:03.019Z",
+  "passed": true,
+  "checks": [
+    "running checkpoint contains en-route mission and pending command",
+    "new process restores the saved exercise paused",
+    "mission, command, sensor queues, clock and reserved resources survive",
+    "restored exercise does not advance without operator resume",
+    "resumed queued acknowledgement executes and crew recovery completes",
+    "returned team releases personnel and kit and exercise pauses"
+  ],
+  "previous": {
+    "scenario": "MAN_OVERBOARD",
+    "running": true,
+    "paused": true,
+    "speed": 1,
+    "simTime": 0,
+    "startedAt": 0,
+    "allClear": false,
+    "limits": {
+      "safeWaterL": 50,
+      "staleAfterS": 30,
+      "propagationS": 2,
+      "executionS": 5,
+      "telemetryDelayS": 5,
+      "rescueRatePerPersonPerMin": 0.5,
+      "fuelLphPerKn": 8
+    },
+    "harbour": {
+      "lat": 9.2876,
+      "lon": 79.3129
+    },
+    "guidance": "Crew are in the water. Only a team carrying a recovery kit can recover them. Resolution needs the automatic water-level sensor confirmation — do not mark anything green before the reports arrive.",
+    "sensors": {
+      "waterSampleAt": null,
+      "waterAgeS": null,
+      "stale": true,
+      "disagreement": false
+    },
+    "teams": [
+      {
+        "id": "T1",
+        "name": "Harbour Swift",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 120,
+        "speedKn": 12,
+        "personnel": {
+          "total": 4,
+          "assigned": 0,
+          "available": 4
+        },
+        "pump": {
+          "available": true,
+          "lpm": 25,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 0
+        },
+        "helper": false,
+        "atHome": true
+      },
+      {
+        "id": "T2",
+        "name": "Harbour Guardian",
+        "status": "EN_ROUTE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 200,
+        "speedKn": 18,
+        "personnel": {
+          "total": 6,
+          "assigned": 6,
+          "available": 0
+        },
+        "pump": {
+          "available": true,
+          "lpm": 40,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 0
+        },
+        "helper": false,
+        "atHome": true
+      }
+    ],
+    "shared": {
+      "recoveryKits": {
+        "total": 1,
+        "available": 0
+      }
+    },
+    "incident": {
+      "id": "INC-MAN_OVERBOARD",
+      "kind": "MAN_OVERBOARD",
+      "status": "OPEN",
+      "position": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewOnboard": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "vesselSafe": true,
+      "sensorConfirmed": false,
+      "acknowledged": false,
+      "resolvedAt": null,
+      "unsafe": [
+        "CREW_UNRESCUED",
+        "NOT_SENSOR_CONFIRMED"
+      ]
+    },
+    "vessel": {
+      "id": "VX",
+      "pos": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewTotal": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "radioUp": true,
+      "inSafeWater": true
+    },
+    "repair": null,
+    "radio": null,
+    "returnSafe": null,
+    "helpers": [],
+    "relay": {
+      "helperId": null,
+      "route": "direct",
+      "enabled": false,
+      "reason": "Relay deferred in this demo",
+      "distanceToVesselKm": null,
+      "distanceToHarbourKm": null,
+      "radioUp": null,
+      "backlog": 0,
+      "dropped": 0,
+      "delivered": 0
+    },
+    "link": {
+      "pendingReports": 0,
+      "dropped": 0
+    },
+    "missions": [
+      {
+        "id": "M1",
+        "teamId": "T2",
+        "purpose": "PRIMARY",
+        "personnel": 6,
+        "recoveryKit": true,
+        "status": "EN_ROUTE",
+        "departedAt": 0,
+        "arrivedAt": null,
+        "completedAt": null,
+        "etaS": 86.39310925296496,
+        "distanceKm": 0.8000001916824556
+      }
+    ],
+    "commands": [
+      {
+        "id": "C1",
+        "teamId": "T2",
+        "missionId": null,
+        "action": "ACKNOWLEDGE",
+        "status": "SENT",
+        "sentAt": 0,
+        "receivedAt": null,
+        "executedAt": null,
+        "confirmedAt": null,
+        "failedAt": null,
+        "failReason": null
+      }
+    ],
+    "timeline": [
+      {
+        "t": 0,
+        "kind": "EXERCISE_STARTED",
+        "detail": {
+          "scenario": "MAN_OVERBOARD",
+          "crew": 2,
+          "radioUp": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "PAUSED",
+        "detail": null
+      },
+      {
+        "t": 0,
+        "kind": "DISPATCHED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "personnel": 6,
+          "recoveryKit": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C1",
+          "team": "T2",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 0,
+        "kind": "RESUMED",
+        "detail": null
+      }
+    ],
+    "results": null,
+    "save": {
+      "ok": true,
+      "source": "primary",
+      "simTime": 0,
+      "error": null
+    },
+    "restored": true
+  },
+  "oldPid": 10908,
+  "durable": {
+    "scenario": "MAN_OVERBOARD",
+    "running": true,
+    "paused": true,
+    "speed": 1,
+    "simTime": 1,
+    "startedAt": 0,
+    "allClear": false,
+    "limits": {
+      "safeWaterL": 50,
+      "staleAfterS": 30,
+      "propagationS": 2,
+      "executionS": 5,
+      "telemetryDelayS": 5,
+      "rescueRatePerPersonPerMin": 0.5,
+      "fuelLphPerKn": 8
+    },
+    "harbour": {
+      "lat": 9.2876,
+      "lon": 79.3129
+    },
+    "guidance": "Crew are in the water. Only a team carrying a recovery kit can recover them. Resolution needs the automatic water-level sensor confirmation — do not mark anything green before the reports arrive.",
+    "sensors": {
+      "waterSampleAt": null,
+      "waterAgeS": null,
+      "stale": true,
+      "disagreement": false
+    },
+    "teams": [
+      {
+        "id": "T1",
+        "name": "Harbour Swift",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 120,
+        "speedKn": 12,
+        "personnel": {
+          "total": 4,
+          "assigned": 0,
+          "available": 4
+        },
+        "pump": {
+          "available": true,
+          "lpm": 25,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 1
+        },
+        "helper": false,
+        "atHome": true
+      },
+      {
+        "id": "T2",
+        "name": "Harbour Guardian",
+        "status": "EN_ROUTE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.31298438339061
+        },
+        "fuelL": 199.96,
+        "speedKn": 18,
+        "personnel": {
+          "total": 6,
+          "assigned": 6,
+          "available": 0
+        },
+        "pump": {
+          "available": true,
+          "lpm": 40,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 1
+        },
+        "helper": false,
+        "atHome": false
+      }
+    ],
+    "shared": {
+      "recoveryKits": {
+        "total": 1,
+        "available": 0
+      }
+    },
+    "incident": {
+      "id": "INC-MAN_OVERBOARD",
+      "kind": "MAN_OVERBOARD",
+      "status": "OPEN",
+      "position": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewOnboard": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "vesselSafe": true,
+      "sensorConfirmed": false,
+      "acknowledged": false,
+      "resolvedAt": null,
+      "unsafe": [
+        "CREW_UNRESCUED",
+        "NOT_SENSOR_CONFIRMED"
+      ]
+    },
+    "vessel": {
+      "id": "VX",
+      "pos": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewTotal": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "radioUp": true,
+      "inSafeWater": true
+    },
+    "repair": null,
+    "radio": null,
+    "returnSafe": null,
+    "helpers": [],
+    "relay": {
+      "helperId": null,
+      "route": "direct",
+      "enabled": false,
+      "reason": "Relay deferred in this demo",
+      "distanceToVesselKm": null,
+      "distanceToHarbourKm": null,
+      "radioUp": null,
+      "backlog": 1,
+      "dropped": 0,
+      "delivered": 0
+    },
+    "link": {
+      "pendingReports": 1,
+      "dropped": 0
+    },
+    "missions": [
+      {
+        "id": "M1",
+        "teamId": "T2",
+        "purpose": "PRIMARY",
+        "personnel": 6,
+        "recoveryKit": true,
+        "status": "EN_ROUTE",
+        "departedAt": 0,
+        "arrivedAt": null,
+        "completedAt": null,
+        "etaS": 85.39310925296496,
+        "distanceKm": 0.7907401916828622
+      }
+    ],
+    "commands": [
+      {
+        "id": "C1",
+        "teamId": "T2",
+        "missionId": null,
+        "action": "ACKNOWLEDGE",
+        "status": "SENT",
+        "sentAt": 0,
+        "receivedAt": null,
+        "executedAt": null,
+        "confirmedAt": null,
+        "failedAt": null,
+        "failReason": null
+      }
+    ],
+    "timeline": [
+      {
+        "t": 0,
+        "kind": "EXERCISE_STARTED",
+        "detail": {
+          "scenario": "MAN_OVERBOARD",
+          "crew": 2,
+          "radioUp": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "PAUSED",
+        "detail": null
+      },
+      {
+        "t": 0,
+        "kind": "DISPATCHED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "personnel": 6,
+          "recoveryKit": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C1",
+          "team": "T2",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 0,
+        "kind": "RESUMED",
+        "detail": null
+      }
+    ],
+    "results": null
+  },
+  "newPid": 9608,
+  "before": {
+    "scenario": "MAN_OVERBOARD",
+    "running": true,
+    "paused": false,
+    "speed": 1,
+    "simTime": 0,
+    "startedAt": 0,
+    "allClear": false,
+    "limits": {
+      "safeWaterL": 50,
+      "staleAfterS": 30,
+      "propagationS": 2,
+      "executionS": 5,
+      "telemetryDelayS": 5,
+      "rescueRatePerPersonPerMin": 0.5,
+      "fuelLphPerKn": 8
+    },
+    "harbour": {
+      "lat": 9.2876,
+      "lon": 79.3129
+    },
+    "guidance": "Crew are in the water. Only a team carrying a recovery kit can recover them. Resolution needs the automatic water-level sensor confirmation — do not mark anything green before the reports arrive.",
+    "sensors": {
+      "waterSampleAt": null,
+      "waterAgeS": null,
+      "stale": true,
+      "disagreement": false
+    },
+    "teams": [
+      {
+        "id": "T1",
+        "name": "Harbour Swift",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 120,
+        "speedKn": 12,
+        "personnel": {
+          "total": 4,
+          "assigned": 0,
+          "available": 4
+        },
+        "pump": {
+          "available": true,
+          "lpm": 25,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 0
+        },
+        "helper": false,
+        "atHome": true
+      },
+      {
+        "id": "T2",
+        "name": "Harbour Guardian",
+        "status": "EN_ROUTE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 200,
+        "speedKn": 18,
+        "personnel": {
+          "total": 6,
+          "assigned": 6,
+          "available": 0
+        },
+        "pump": {
+          "available": true,
+          "lpm": 40,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 0
+        },
+        "helper": false,
+        "atHome": true
+      }
+    ],
+    "shared": {
+      "recoveryKits": {
+        "total": 1,
+        "available": 0
+      }
+    },
+    "incident": {
+      "id": "INC-MAN_OVERBOARD",
+      "kind": "MAN_OVERBOARD",
+      "status": "OPEN",
+      "position": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewOnboard": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "vesselSafe": true,
+      "sensorConfirmed": false,
+      "acknowledged": false,
+      "resolvedAt": null,
+      "unsafe": [
+        "CREW_UNRESCUED",
+        "NOT_SENSOR_CONFIRMED"
+      ]
+    },
+    "vessel": {
+      "id": "VX",
+      "pos": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewTotal": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "radioUp": true,
+      "inSafeWater": true
+    },
+    "repair": null,
+    "radio": null,
+    "returnSafe": null,
+    "helpers": [],
+    "relay": {
+      "helperId": null,
+      "route": "direct",
+      "enabled": false,
+      "reason": "Relay deferred in this demo",
+      "distanceToVesselKm": null,
+      "distanceToHarbourKm": null,
+      "radioUp": null,
+      "backlog": 0,
+      "dropped": 0,
+      "delivered": 0
+    },
+    "link": {
+      "pendingReports": 0,
+      "dropped": 0
+    },
+    "missions": [
+      {
+        "id": "M1",
+        "teamId": "T2",
+        "purpose": "PRIMARY",
+        "personnel": 6,
+        "recoveryKit": true,
+        "status": "EN_ROUTE",
+        "departedAt": 0,
+        "arrivedAt": null,
+        "completedAt": null,
+        "etaS": 86.39310925296496,
+        "distanceKm": 0.8000001916824556
+      }
+    ],
+    "commands": [
+      {
+        "id": "C1",
+        "teamId": "T2",
+        "missionId": null,
+        "action": "ACKNOWLEDGE",
+        "status": "SENT",
+        "sentAt": 0,
+        "receivedAt": null,
+        "executedAt": null,
+        "confirmedAt": null,
+        "failedAt": null,
+        "failReason": null
+      }
+    ],
+    "timeline": [
+      {
+        "t": 0,
+        "kind": "EXERCISE_STARTED",
+        "detail": {
+          "scenario": "MAN_OVERBOARD",
+          "crew": 2,
+          "radioUp": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "PAUSED",
+        "detail": null
+      },
+      {
+        "t": 0,
+        "kind": "DISPATCHED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "personnel": 6,
+          "recoveryKit": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C1",
+          "team": "T2",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 0,
+        "kind": "RESUMED",
+        "detail": null
+      }
+    ],
+    "results": null,
+    "save": {
+      "ok": true,
+      "source": "primary",
+      "simTime": 0,
+      "error": null
+    },
+    "restored": false
+  },
+  "after": {
+    "scenario": "MAN_OVERBOARD",
+    "running": true,
+    "paused": true,
+    "speed": 1,
+    "simTime": 1,
+    "startedAt": 0,
+    "allClear": false,
+    "limits": {
+      "safeWaterL": 50,
+      "staleAfterS": 30,
+      "propagationS": 2,
+      "executionS": 5,
+      "telemetryDelayS": 5,
+      "rescueRatePerPersonPerMin": 0.5,
+      "fuelLphPerKn": 8
+    },
+    "harbour": {
+      "lat": 9.2876,
+      "lon": 79.3129
+    },
+    "guidance": "Crew are in the water. Only a team carrying a recovery kit can recover them. Resolution needs the automatic water-level sensor confirmation — do not mark anything green before the reports arrive.",
+    "sensors": {
+      "waterSampleAt": null,
+      "waterAgeS": null,
+      "stale": true,
+      "disagreement": false
+    },
+    "teams": [
+      {
+        "id": "T1",
+        "name": "Harbour Swift",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 120,
+        "speedKn": 12,
+        "personnel": {
+          "total": 4,
+          "assigned": 0,
+          "available": 4
+        },
+        "pump": {
+          "available": true,
+          "lpm": 25,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 1
+        },
+        "helper": false,
+        "atHome": true
+      },
+      {
+        "id": "T2",
+        "name": "Harbour Guardian",
+        "status": "EN_ROUTE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.31298438339061
+        },
+        "fuelL": 199.96,
+        "speedKn": 18,
+        "personnel": {
+          "total": 6,
+          "assigned": 6,
+          "available": 0
+        },
+        "pump": {
+          "available": true,
+          "lpm": 40,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": null,
+          "fixSentAt": null,
+          "receivedAt": null,
+          "ageS": null,
+          "stale": true,
+          "pendingFixes": 1
+        },
+        "helper": false,
+        "atHome": false
+      }
+    ],
+    "shared": {
+      "recoveryKits": {
+        "total": 1,
+        "available": 0
+      }
+    },
+    "incident": {
+      "id": "INC-MAN_OVERBOARD",
+      "kind": "MAN_OVERBOARD",
+      "status": "OPEN",
+      "position": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewOnboard": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "vesselSafe": true,
+      "sensorConfirmed": false,
+      "acknowledged": false,
+      "resolvedAt": null,
+      "unsafe": [
+        "CREW_UNRESCUED",
+        "NOT_SENSOR_CONFIRMED"
+      ]
+    },
+    "vessel": {
+      "id": "VX",
+      "pos": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewTotal": 2,
+      "crewRescued": 0,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "radioUp": true,
+      "inSafeWater": true
+    },
+    "repair": null,
+    "radio": null,
+    "returnSafe": null,
+    "helpers": [],
+    "relay": {
+      "helperId": null,
+      "route": "direct",
+      "enabled": false,
+      "reason": "Relay deferred in this demo",
+      "distanceToVesselKm": null,
+      "distanceToHarbourKm": null,
+      "radioUp": null,
+      "backlog": 1,
+      "dropped": 0,
+      "delivered": 0
+    },
+    "link": {
+      "pendingReports": 1,
+      "dropped": 0
+    },
+    "missions": [
+      {
+        "id": "M1",
+        "teamId": "T2",
+        "purpose": "PRIMARY",
+        "personnel": 6,
+        "recoveryKit": true,
+        "status": "EN_ROUTE",
+        "departedAt": 0,
+        "arrivedAt": null,
+        "completedAt": null,
+        "etaS": 85.39310925296496,
+        "distanceKm": 0.7907401916828622
+      }
+    ],
+    "commands": [
+      {
+        "id": "C1",
+        "teamId": "T2",
+        "missionId": null,
+        "action": "ACKNOWLEDGE",
+        "status": "SENT",
+        "sentAt": 0,
+        "receivedAt": null,
+        "executedAt": null,
+        "confirmedAt": null,
+        "failedAt": null,
+        "failReason": null
+      }
+    ],
+    "timeline": [
+      {
+        "t": 0,
+        "kind": "EXERCISE_STARTED",
+        "detail": {
+          "scenario": "MAN_OVERBOARD",
+          "crew": 2,
+          "radioUp": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "PAUSED",
+        "detail": null
+      },
+      {
+        "t": 0,
+        "kind": "DISPATCHED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "personnel": 6,
+          "recoveryKit": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C1",
+          "team": "T2",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 0,
+        "kind": "RESUMED",
+        "detail": null
+      }
+    ],
+    "results": null,
+    "save": {
+      "ok": true,
+      "source": "primary",
+      "simTime": 1,
+      "error": null
+    },
+    "restored": true
+  },
+  "end": {
+    "scenario": "MAN_OVERBOARD",
+    "running": true,
+    "paused": true,
+    "speed": 20,
+    "simTime": 241,
+    "startedAt": 0,
+    "allClear": true,
+    "limits": {
+      "safeWaterL": 50,
+      "staleAfterS": 30,
+      "propagationS": 2,
+      "executionS": 5,
+      "telemetryDelayS": 5,
+      "rescueRatePerPersonPerMin": 0.5,
+      "fuelLphPerKn": 8
+    },
+    "harbour": {
+      "lat": 9.2876,
+      "lon": 79.3129
+    },
+    "guidance": "Crew are in the water. Only a team carrying a recovery kit can recover them. Resolution needs the automatic water-level sensor confirmation — do not mark anything green before the reports arrive.",
+    "sensors": {
+      "waterSampleAt": 226,
+      "waterAgeS": 15,
+      "stale": false,
+      "disagreement": false
+    },
+    "teams": [
+      {
+        "id": "T1",
+        "name": "Harbour Swift",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 120,
+        "speedKn": 12,
+        "personnel": {
+          "total": 4,
+          "assigned": 0,
+          "available": 4
+        },
+        "pump": {
+          "available": true,
+          "lpm": 25,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": {
+            "lat": 9.2876,
+            "lon": 79.3129
+          },
+          "fixSentAt": 236,
+          "receivedAt": 241,
+          "ageS": 5,
+          "stale": false,
+          "pendingFixes": 5
+        },
+        "helper": false,
+        "atHome": true
+      },
+      {
+        "id": "T2",
+        "name": "Harbour Guardian",
+        "status": "IDLE",
+        "pos": {
+          "lat": 9.2876,
+          "lon": 79.3129
+        },
+        "fuelL": 193.0885512597642,
+        "speedKn": 18,
+        "personnel": {
+          "total": 6,
+          "assigned": 0,
+          "available": 6
+        },
+        "pump": {
+          "available": true,
+          "lpm": 40,
+          "running": false,
+          "fault": false,
+          "battery": {
+            "capacityWh": 20,
+            "chargeWh": 20,
+            "drawW": 120,
+            "lowFraction": 0.2,
+            "percent": 1,
+            "low": false,
+            "depleted": false
+          },
+          "recharge": null,
+          "estimatedRunS": 600
+        },
+        "telemetry": {
+          "receivedPos": {
+            "lat": 9.2876,
+            "lon": 79.3129
+          },
+          "fixSentAt": 236,
+          "receivedAt": 241,
+          "ageS": 5,
+          "stale": false,
+          "pendingFixes": 5
+        },
+        "helper": false,
+        "atHome": true
+      }
+    ],
+    "shared": {
+      "recoveryKits": {
+        "total": 1,
+        "available": 1
+      }
+    },
+    "incident": {
+      "id": "INC-MAN_OVERBOARD",
+      "kind": "MAN_OVERBOARD",
+      "status": "RESOLVED",
+      "position": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewOnboard": 2,
+      "crewRescued": 2,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "vesselSafe": true,
+      "sensorConfirmed": true,
+      "acknowledged": true,
+      "resolvedAt": 127,
+      "unsafe": []
+    },
+    "vessel": {
+      "id": "VX",
+      "pos": {
+        "lat": 9.2876,
+        "lon": 79.32019014348457
+      },
+      "crewTotal": 2,
+      "crewRescued": 2,
+      "waterL": 0,
+      "ingressLpm": 0,
+      "radioUp": true,
+      "inSafeWater": true
+    },
+    "repair": null,
+    "radio": null,
+    "returnSafe": null,
+    "helpers": [],
+    "relay": {
+      "helperId": null,
+      "route": "direct",
+      "enabled": false,
+      "reason": "Relay deferred in this demo",
+      "distanceToVesselKm": null,
+      "distanceToHarbourKm": null,
+      "radioUp": null,
+      "backlog": 1,
+      "dropped": 0,
+      "delivered": 0
+    },
+    "link": {
+      "pendingReports": 1,
+      "dropped": 0
+    },
+    "missions": [
+      {
+        "id": "M1",
+        "teamId": "T2",
+        "purpose": "PRIMARY",
+        "personnel": 6,
+        "recoveryKit": true,
+        "status": "COMPLETED",
+        "departedAt": 0,
+        "arrivedAt": 86.39310925296496,
+        "completedAt": 234.39310925296496,
+        "etaS": null,
+        "distanceKm": 0
+      }
+    ],
+    "commands": [
+      {
+        "id": "C1",
+        "teamId": "T2",
+        "missionId": null,
+        "action": "ACKNOWLEDGE",
+        "status": "CONFIRMED",
+        "sentAt": 0,
+        "receivedAt": 2,
+        "executedAt": 7,
+        "confirmedAt": 8,
+        "failedAt": null,
+        "failReason": null
+      },
+      {
+        "id": "C2",
+        "teamId": "T2",
+        "missionId": "M1",
+        "action": "RETURN",
+        "status": "CONFIRMED",
+        "sentAt": 141,
+        "receivedAt": 143,
+        "executedAt": 148,
+        "confirmedAt": 149,
+        "failedAt": null,
+        "failReason": null
+      }
+    ],
+    "timeline": [
+      {
+        "t": 0,
+        "kind": "EXERCISE_STARTED",
+        "detail": {
+          "scenario": "MAN_OVERBOARD",
+          "crew": 2,
+          "radioUp": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "PAUSED",
+        "detail": null
+      },
+      {
+        "t": 0,
+        "kind": "DISPATCHED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "personnel": 6,
+          "recoveryKit": true
+        }
+      },
+      {
+        "t": 0,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C1",
+          "team": "T2",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 0,
+        "kind": "RESUMED",
+        "detail": null
+      },
+      {
+        "t": 1,
+        "kind": "SPEED",
+        "detail": {
+          "speed": 20
+        }
+      },
+      {
+        "t": 1,
+        "kind": "RESUMED",
+        "detail": null
+      },
+      {
+        "t": 2,
+        "kind": "CMD_RECEIVED",
+        "detail": {
+          "command": "C1"
+        }
+      },
+      {
+        "t": 6,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 6,
+          "sampleAt": 1,
+          "relayed": false
+        }
+      },
+      {
+        "t": 7,
+        "kind": "CMD_EXECUTED",
+        "detail": {
+          "command": "C1",
+          "action": "ACKNOWLEDGE"
+        }
+      },
+      {
+        "t": 8,
+        "kind": "CMD_CONFIRMED",
+        "detail": {
+          "command": "C1"
+        }
+      },
+      {
+        "t": 21,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 21,
+          "sampleAt": 16,
+          "relayed": false
+        }
+      },
+      {
+        "t": 36,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 36,
+          "sampleAt": 31,
+          "relayed": false
+        }
+      },
+      {
+        "t": 51,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 51,
+          "sampleAt": 46,
+          "relayed": false
+        }
+      },
+      {
+        "t": 66,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 66,
+          "sampleAt": 61,
+          "relayed": false
+        }
+      },
+      {
+        "t": 81,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 81,
+          "sampleAt": 76,
+          "relayed": false
+        }
+      },
+      {
+        "t": 86.39310925296496,
+        "kind": "ARRIVED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2",
+          "incident": "INC-MAN_OVERBOARD"
+        }
+      },
+      {
+        "t": 96,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 96,
+          "sampleAt": 91,
+          "relayed": false
+        }
+      },
+      {
+        "t": 96,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "PUMP_STATE",
+          "value": "off",
+          "at": 96,
+          "sampleAt": 91,
+          "relayed": false
+        }
+      },
+      {
+        "t": 111,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 111,
+          "sampleAt": 106,
+          "relayed": false
+        }
+      },
+      {
+        "t": 126,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 126,
+          "sampleAt": 121,
+          "relayed": false
+        }
+      },
+      {
+        "t": 127,
+        "kind": "RESOLVED",
+        "detail": {
+          "incident": "INC-MAN_OVERBOARD"
+        }
+      },
+      {
+        "t": 141,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 141,
+          "sampleAt": 136,
+          "relayed": false
+        }
+      },
+      {
+        "t": 141,
+        "kind": "COMMAND_SENT",
+        "detail": {
+          "command": "C2",
+          "team": "T2",
+          "action": "RETURN"
+        }
+      },
+      {
+        "t": 143,
+        "kind": "CMD_RECEIVED",
+        "detail": {
+          "command": "C2"
+        }
+      },
+      {
+        "t": 148,
+        "kind": "CMD_EXECUTED",
+        "detail": {
+          "command": "C2",
+          "action": "RETURN"
+        }
+      },
+      {
+        "t": 149,
+        "kind": "CMD_CONFIRMED",
+        "detail": {
+          "command": "C2"
+        }
+      },
+      {
+        "t": 156,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 156,
+          "sampleAt": 151,
+          "relayed": false
+        }
+      },
+      {
+        "t": 171,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 171,
+          "sampleAt": 166,
+          "relayed": false
+        }
+      },
+      {
+        "t": 186,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 186,
+          "sampleAt": 181,
+          "relayed": false
+        }
+      },
+      {
+        "t": 201,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 201,
+          "sampleAt": 196,
+          "relayed": false
+        }
+      },
+      {
+        "t": 216,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 216,
+          "sampleAt": 211,
+          "relayed": false
+        }
+      },
+      {
+        "t": 231,
+        "kind": "SENSOR_RECEIVED",
+        "detail": {
+          "kind": "WATER_LEVEL",
+          "value": 0,
+          "at": 231,
+          "sampleAt": 226,
+          "relayed": false
+        }
+      },
+      {
+        "t": 234.39310925296496,
+        "kind": "RETURNED",
+        "detail": {
+          "mission": "M1",
+          "team": "T2"
+        }
+      },
+      {
+        "t": 241,
+        "kind": "EXERCISE_COMPLETE",
+        "detail": {
+          "crewSafe": true,
+          "vesselSafe": true
+        }
+      }
+    ],
+    "results": {
+      "scenario": "MAN_OVERBOARD",
+      "resolved": true,
+      "crewSafe": true,
+      "vesselSafe": true,
+      "allClear": true,
+      "delays": {
+        "detectionS": 0,
+        "acknowledgementS": 0,
+        "dispatchS": 0,
+        "arrivalS": 87,
+        "repairS": null,
+        "resolutionS": 127
+      },
+      "crew": {
+        "onboard": 2,
+        "rescued": 2
+      },
+      "water": {
+        "levelL": 0,
+        "ingressLpm": 0
+      },
+      "radio": null,
+      "repair": null,
+      "returnSafe": null,
+      "helpers": {
+        "dispatches": 0
+      },
+      "relay": {
+        "delivered": 0,
+        "dropped": 0
+      }
+    },
+    "save": {
+      "ok": true,
+      "source": "primary",
+      "simTime": 241,
+      "error": null
+    },
+    "restored": true
+  }
+}

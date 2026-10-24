@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-24T08:20:58.659Z",
+  "rows": [
+    {
+      "name": "pre-start replacement rejects atomically rather than creating a stuck countdown",
+      "passed": true
+    },
+    {
+      "name": "replacement after completion resumes, runs exactly 60 seconds and pauses again",
+      "passed": true
+    }
+  ]
+}

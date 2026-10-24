@@ -1,0 +1,433 @@
+{
+  "module": "seaguard/src/rescue/battery.cjs",
+  "testFile": "seaguard/tests/rescue-battery.mjs",
+  "generatedAt": "2026-10-24T08:20:58.624Z",
+  "note": "Deterministic local simulation only; illustrative values, no hardware claim.",
+  "total": 18,
+  "pass": 18,
+  "fail": 0,
+  "results": [
+    {
+      "name": "exact-unit-conversion",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "energyUsedWh === 10 (got 10)"
+        },
+        {
+          "ok": true,
+          "note": "chargeWh === 90 (got 90)"
+        },
+        {
+          "ok": true,
+          "note": "poweredSeconds === 3600"
+        },
+        {
+          "ok": true,
+          "note": "low false above threshold"
+        },
+        {
+          "ok": true,
+          "note": "depleted false"
+        }
+      ]
+    },
+    {
+      "name": "partial-second-exhaustion",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds === 360 (got 360)"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh === 1 (got 1)"
+        },
+        {
+          "ok": true,
+          "note": "chargeWh === 0 (got 0)"
+        },
+        {
+          "ok": true,
+          "note": "depleted true"
+        },
+        {
+          "ok": true,
+          "note": "low true at zero"
+        }
+      ]
+    },
+    {
+      "name": "fractional-second-exhaustion",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds === 3600/3.65 (got 986.3013698630136)"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh === 1 (got 1)"
+        },
+        {
+          "ok": true,
+          "note": "chargeWh === 0 (got 0)"
+        },
+        {
+          "ok": true,
+          "note": "depleted true"
+        }
+      ]
+    },
+    {
+      "name": "idle-no-consume",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds 0"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh 0"
+        },
+        {
+          "ok": true,
+          "note": "charge unchanged"
+        },
+        {
+          "ok": true,
+          "note": "not depleted"
+        }
+      ]
+    },
+    {
+      "name": "fault-consumes-zero",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds 0"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh 0"
+        },
+        {
+          "ok": true,
+          "note": "charge unchanged"
+        }
+      ]
+    },
+    {
+      "name": "zero-dt",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds 0"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh 0"
+        },
+        {
+          "ok": true,
+          "note": "charge unchanged"
+        }
+      ]
+    },
+    {
+      "name": "zero-draw",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "poweredSeconds 3600"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh 0"
+        },
+        {
+          "ok": true,
+          "note": "charge unchanged"
+        },
+        {
+          "ok": true,
+          "note": "7 Wh is not depleted"
+        }
+      ]
+    },
+    {
+      "name": "low-threshold-inclusive",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "charge exactly at 20% is low"
+        },
+        {
+          "ok": true,
+          "note": "just above 20% is not low"
+        },
+        {
+          "ok": true,
+          "note": "step lands exactly on threshold (got 20)"
+        },
+        {
+          "ok": true,
+          "note": "landing exactly on threshold is low"
+        }
+      ]
+    },
+    {
+      "name": "custom-low-fraction",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "lowFraction stored"
+        },
+        {
+          "ok": true,
+          "note": "exactly at 50% is low"
+        },
+        {
+          "ok": true,
+          "note": "above 50% not low"
+        }
+      ]
+    },
+    {
+      "name": "initial-zero-charge",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "depleted true"
+        },
+        {
+          "ok": true,
+          "note": "low true"
+        },
+        {
+          "ok": true,
+          "note": "cannot run on zero charge"
+        },
+        {
+          "ok": true,
+          "note": "no negative energy"
+        }
+      ]
+    },
+    {
+      "name": "non-mutation",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "input battery unchanged"
+        },
+        {
+          "ok": true,
+          "note": "step object unchanged"
+        },
+        {
+          "ok": true,
+          "note": "returns a NEW battery object"
+        },
+        {
+          "ok": true,
+          "note": "new battery shape exact (got {\"capacityWh\":100,\"chargeWh\":20,\"drawW\":10,\"lowFraction\":0.2})"
+        }
+      ]
+    },
+    {
+      "name": "step-partition-equivalence",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "two-step total energy matches whole (got 10)"
+        },
+        {
+          "ok": true,
+          "note": "three-step total energy matches whole (got 10)"
+        },
+        {
+          "ok": true,
+          "note": "two-step final charge matches"
+        },
+        {
+          "ok": true,
+          "note": "three-step final charge matches"
+        },
+        {
+          "ok": true,
+          "note": "two-step flags match"
+        },
+        {
+          "ok": true,
+          "note": "three-step flags match"
+        }
+      ]
+    },
+    {
+      "name": "partition-across-exhaustion",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "360+360 energy == 720 energy (got 1)"
+        },
+        {
+          "ok": true,
+          "note": "500+220 energy == 720 energy (got 1)"
+        },
+        {
+          "ok": true,
+          "note": "all partitions end depleted"
+        },
+        {
+          "ok": true,
+          "note": "all partitions report depleted"
+        },
+        {
+          "ok": true,
+          "note": "whole step powers exactly 360 s"
+        }
+      ]
+    },
+    {
+      "name": "invalid-parameters-atomicity",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "battery unmutated after 13 failed consumes"
+        }
+      ]
+    },
+    {
+      "name": "dtS-boundaries-inclusive",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "dtS 0 accepted, zero energy"
+        },
+        {
+          "ok": true,
+          "note": "dtS 3600 accepted, 1 Wh at 1 W"
+        }
+      ]
+    },
+    {
+      "name": "default-low-fraction-and-copy",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "default lowFraction 0.2 (got 0.2)"
+        },
+        {
+          "ok": true,
+          "note": "returns a new object"
+        },
+        {
+          "ok": true,
+          "note": "input options mutation does not affect battery"
+        },
+        {
+          "ok": true,
+          "note": "25 of 50 (50%) is above the 20% threshold, not low"
+        },
+        {
+          "ok": true,
+          "note": "exactly 10 of 50 (20%) is low"
+        }
+      ]
+    },
+    {
+      "name": "extreme-finite-no-overflow",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "energyUsedWh finite (got 8.988465674311579e+307)"
+        },
+        {
+          "ok": true,
+          "note": "energyUsedWh === M/2 (got 8.988465674311579e+307)"
+        },
+        {
+          "ok": true,
+          "note": "runs the full step (got 1800)"
+        },
+        {
+          "ok": true,
+          "note": "charge decremented by M/2 to M/2 (got 8.988465674311579e+307)"
+        },
+        {
+          "ok": true,
+          "note": "exhausted energyUsedWh === M (got 1.7976931348623157e+308)"
+        },
+        {
+          "ok": true,
+          "note": "exhausted poweredSeconds === 3600, no overflow (got 3600)"
+        },
+        {
+          "ok": true,
+          "note": "fully depleted (got 0)"
+        }
+      ]
+    },
+    {
+      "name": "zero-charge-zero-draw",
+      "ok": true,
+      "error": null,
+      "details": [
+        {
+          "ok": true,
+          "note": "depleted battery powers no seconds even at drawW 0 (got 0)"
+        },
+        {
+          "ok": true,
+          "note": "zero energy (got 0)"
+        },
+        {
+          "ok": true,
+          "note": "depleted true (got true)"
+        },
+        {
+          "ok": true,
+          "note": "low true at zero charge (got true)"
+        },
+        {
+          "ok": true,
+          "note": "charge stays 0 (got 0)"
+        }
+      ]
+    }
+  ]
+}

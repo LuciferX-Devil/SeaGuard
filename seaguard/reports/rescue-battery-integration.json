@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-24T08:20:58.693Z",
+  "rows": [
+    {
+      "name": "fractional exhaustion removes only powered litres and stops actual pump",
+      "passed": true
+    },
+    {
+      "name": "off, travel and faulted pumps consume no charge",
+      "passed": true
+    },
+    {
+      "name": "empty START fails at execution without pumping or confirmation",
+      "passed": true
+    },
+    {
+      "name": "fault stops actual running feedback and needs a new start after repair",
+      "passed": true
+    },
+    {
+      "name": "warning and depletion events fire once without tick spam",
+      "passed": true
+    },
+    {
+      "name": "return does not refill; replacement waits full 60 seconds",
+      "passed": true
+    },
+    {
+      "name": "JSON roundtrip retains exhausted battery and partial replacement",
+      "passed": true
+    },
+    {
+      "name": "large and partitioned pump steps conserve energy and water",
+      "passed": true
+    },
+    {
+      "name": "status exposes charge fraction and finite runtime",
+      "passed": true
+    }
+  ]
+}

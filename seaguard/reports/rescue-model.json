@@ -1,0 +1,75 @@
+{
+  "at": "2026-10-24T08:20:58.788Z",
+  "model": "seaguard/src/rescue/model.cjs",
+  "revision": 2,
+  "tests": [
+    {
+      "name": "createState defaults: two finite teams at the harbour, all resources finite, allClear",
+      "passed": true
+    },
+    {
+      "name": "knots conversion is exact: 12 kn team covers the distance in distance/(12*1.852) hours",
+      "passed": true
+    },
+    {
+      "name": "undersized first team fails alone; reinforcement with bigger pump resolves (sensor-confirmed)",
+      "passed": true
+    },
+    {
+      "name": "travel completes only after the full distance; no early arrival, no overshoot, no work before arrival",
+      "passed": true
+    },
+    {
+      "name": "resources unavailable until return; released and reusable after arrival at harbour",
+      "passed": true
+    },
+    {
+      "name": "received GPS staleness derives from fix sample time; old backlog after outage does not look fresh",
+      "passed": true
+    },
+    {
+      "name": "lost command never executes; retransmit works; an outage delays (does not lose) commands",
+      "passed": true
+    },
+    {
+      "name": "pump fault: command fails, sensors disagree, resolution only after a healthy pump",
+      "passed": true
+    },
+    {
+      "name": "input validation: IDs, finite numbers, safe-integer personnel, coordinates, time — atomic rejection",
+      "passed": true
+    },
+    {
+      "name": "impossible transitions rejected: return off-scene, work on resolved incident, reinforce without mission, drop executed command",
+      "passed": true
+    },
+    {
+      "name": "pump commands are incident-scoped: STOP_PUMP for incident B cannot stop incident A pump",
+      "passed": true
+    },
+    {
+      "name": "resolved incident is not frozen: continuing ingress reopens it after the pump stops",
+      "passed": true
+    },
+    {
+      "name": "deterministic: identical inputs produce identical state trajectories",
+      "passed": true
+    },
+    {
+      "name": "fuel is consumed on the move; a low-fuel team strands and the incident stays unresolved",
+      "passed": true
+    },
+    {
+      "name": "partial personnel allocation limits the rescue rate and leaves crew ashore",
+      "passed": true
+    },
+    {
+      "name": "large-tick equivalence: a 300s tick equals sixty 5s ticks (no event skipped)",
+      "passed": true
+    },
+    {
+      "name": "final-return fuel exhaustion: a team stranding on the return leg does not release resources",
+      "passed": true
+    }
+  ]
+}
