@@ -1,0 +1,15 @@
+{
+  "builtAt": "2026-10-24T08:20:37.011Z",
+  "platform": "Windows x64",
+  "node": "v24.22.1",
+  "freeze": "Active reviewed battery-stage flow/UI, copied controller with unfinished assistance/relay disabled",
+  "excluded": [
+    "credentials",
+    "development snapshots",
+    "Unsloth",
+    "GPU project",
+    "Tri-Mode",
+    "unverified assistance/relay UI"
+  ],
+  "visualAcceptance": "not exercised: browser permission denied"
+}

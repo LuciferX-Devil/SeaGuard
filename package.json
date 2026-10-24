@@ -1,0 +1,14 @@
+{
+  "name": "seaguard-demo",
+  "version": "1.2.0-demo",
+  "private": true,
+  "description": "Local maritime IoT rescue simulation",
+  "scripts": {
+    "build": "node seaguard/build.mjs",
+    "test": "node verify.mjs",
+    "start": "node launch.mjs"
+  },
+  "dependencies": {
+    "node-red": "4.1.16"
+  }
+}

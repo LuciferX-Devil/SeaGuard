@@ -1,0 +1,10 @@
+node_modules/
+userdir/node_modules/
+runtime/node.exe
+logs/*
+!logs/.gitkeep
+seaguard/data/*
+!seaguard/data/.gitkeep
+userdir/.config*
+userdir/lib/
+*.zip
