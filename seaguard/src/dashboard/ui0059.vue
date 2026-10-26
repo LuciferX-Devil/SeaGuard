@@ -2,7 +2,7 @@
     <div class="sg">
         <div class="sg-h">
             <h2>How SeaGuard is put together</h2>
-            <span class="sg-sub">Small fishing boats lose contact the moment they leave the harbour. SeaGuard gives each boat a low-power radio link, watches for capsize, flooding, man overboard and boundary crossings, and tells the family and the coast guard within seconds.</span>
+            <span class="sg-sub">SeaGuard models a safety link between fishing boats and the shore. Simulated sensors detect capsize, flooding, missing crew and boundary crossings. The shore system groups reports into incidents and tests how alerts and rescue responses behave when communications are unreliable.</span>
         </div>
 
         <svg viewBox="0 0 980 300" style="width:100%;height:auto;max-height:320px" role="img" aria-label="SeaGuard architecture">
@@ -58,7 +58,7 @@
 
                 <rect x="232" y="222" width="516" height="56" fill="#fff" stroke="#b0277a" stroke-dasharray="6,4"/>
                 <text x="240" y="242" font-weight="600" fill="#b0277a">Test harness</text>
-                <text x="240" y="262" fill="#3e6e8e">injects faults into the physics, the radio, the gateway, the weather feed and the messaging service, then checks the outcome</text>
+                <text x="240" y="258" fill="#3e6e8e"><tspan x="240">Injects sensor, radio, gateway, weather and messaging faults.</tspan><tspan x="240" dy="14">Checks detection, delivery, recovery and trip-record integrity.</tspan></text>
 
                 <g stroke="#3e6e8e" fill="none" marker-end="url(#ar)">
                     <path d="M186,76 L228,76"/>
@@ -71,7 +71,7 @@
                     <path d="M750,140 L788,150"/>
                     <path d="M572,120 L190,120"/>
                 </g>
-                <text x="300" y="114" font-size="11" fill="#3e6e8e">acknowledgements and advisories travel back the same way</text>
+                <text x="240" y="114" font-size="11" fill="#3e6e8e">Acknowledgements and advisories return to the boat</text>
             </g>
         </svg>
 
@@ -90,7 +90,7 @@
                 <p class="sg-sub">Each run drives the whole stack: sensors feed firmware, firmware talks over a lossy radio to a real MQTT broker, the shore services correlate what arrives, and alerts go out over HTTP. The checks measure system behaviour end to end &mdash; detection latency, deduplication, suppression, escalation, recovery after outages and log integrity.</p>
                 <p class="sg-sub">What they do not prove is physical realism. The sensor models are plausible, not calibrated against real boats, so the thresholds would need tuning against real IMU and bilge data before anyone trusted this at sea.</p>
                 <h3>Running it yourself</h3>
-                <p class="sg-sub">Open the test lab, press the run button, and watch the injection log fill up. Enter the same seed twice to replay the same campaign. Everything runs inside Node-RED: the MQTT broker, the weather API mock and the messaging mock are all local, so no hardware, no accounts and no internet are needed for a test run.</p>
+                <p class="sg-sub">Open the test lab, press the run button, and watch the injection log fill up. Enter the same seed twice to replay the same campaign. Everything runs inside Node-RED: the MQTT broker, the weather API mock and the messaging mock are all local, so no hardware or accounts are needed for a test run. Geographical map tiles need internet access.</p>
             </div>
         </div>
     </div>

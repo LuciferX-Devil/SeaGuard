@@ -17,7 +17,8 @@ const sup = global.get('suppressions') || [], mock = global.get('mockTelegram') 
 
 const pct = v => v == null ? null : Math.max(0, Math.min(100, Math.round((v - 11.2) / 1.6 * 100)));
 const head = { running: global.get('simRunning') || false, speed: global.get('simSpeed') || 1, t, mode, seed: T.seed ?? null,
-    testState: T.state, epoch: ep };
+    testState: T.state, epoch: ep,
+    save: global.get('fleetSaveStatus') || null }; // fleet checkpoint/restore/error status for operator UI
 
 const boats = (layout.boats || []).map(b => {
     const s = fleetG[b.id] || {}, tr = truth[b.id] || {}, L = shore[b.id] || {}, F = fw[b.id] || {}, g = geo[b.id] || {};
@@ -138,6 +139,7 @@ const testMsg = {
         injLog: (T.injLog || []).slice(-90).reverse(),
         events: eventLog.slice(-40).reverse().map(e => ({ t: e.t, type: e.type, boat: e.boat, source: e.source, disposition: e.disposition, incident: e.incident, note: e.note })),
         results: T.results || null,
+        metrics: (T.results && T.results.metrics) || null,
         history: T.history || [],
         boats: (layout.boats || []).map(b => ({ id: b.id, name: b.name, role: b.role })),
         faultTypes: ['CAPSIZE', 'FLOODING', 'MOB', 'SOS_BUTTON', 'WAVE_SPIKE', 'SPLASH', 'TAG_FLICKER', 'RADIO_BLACKOUT',
@@ -164,7 +166,7 @@ for (const b of boats) {
         payload: {
             name: b.id + ' ' + b.name, lat: b.shore.lat, lon: b.shore.lon, icon: 'ship', iconColor: colors[b.level] || '#2f7d5b',
             hdg: b.shore.hdg, layer: 'Fleet', ttl: 600,
-            popup: '<b>' + b.id + ' ' + b.name + '</b><br/>' + b.text + '<br/>crew ' + (b.shore.crew == null ? '?' : b.shore.crew) + '/' + (b.shore.crewTotal || '?') +
+            popup: b.text + '<br/>crew ' + (b.shore.crew == null ? '?' : b.shore.crew) + '/' + (b.shore.crewTotal || '?') +
                 '<br/>heard ' + (b.shore.age == null ? '-' : b.shore.age + ' s ago') + (b.shore.rssi ? ' at ' + b.shore.rssi + ' dBm' : '')
         }
     });

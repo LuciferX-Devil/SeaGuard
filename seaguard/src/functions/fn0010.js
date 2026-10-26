@@ -45,7 +45,24 @@ if (msg.topic === 'mqttStatus') {
 if (msg.topic === 'tick') {
     const outage = lib.findFault(global.get('faults') || [], t, null, 'GATEWAY_OUTAGE');
     if (outage && !G.forcedDown) { G.forcedDown = true; out1.push({ action: 'disconnect' }); glog('FAULT', 'Backhaul link cut (injected outage)'); }
+    else if (outage && G.forcedDown && G.connected) {
+        // A saved forcedDown flag does not control a FRESH MQTT client: restored
+        // mid-outage with the client actually connected, so re-issue the disconnect
+        // on the first post-resume tick. Once it lands, mqttStatus flips
+        // G.connected and this cannot repeat.
+        out1.push({ action: 'disconnect' });
+        glog('FAULT', 'Backhaul disconnect re-issued for fresh client (outage still active)');
+    }
     if (!outage && G.forcedDown) { G.forcedDown = false; out1.push({ action: 'connect' }); glog('FAULT', 'Backhaul link restored'); }
+    if (G.connected && !G.forcedDown && G.buffer.length > 0) {
+        // First tick after a held reconnect (restored pause): the mqttStatus body
+        // never ran while held, so flush the saved buffer here, with the same stats
+        // as the mqttStatus flush. Repeated healthy ticks find an empty buffer, so
+        // nothing is transmitted twice.
+        glog('UP', `Backhaul available; flushing ${G.buffer.length} buffered packet(s)`);
+        for (const p of G.buffer) { out1.push(pub(p)); G.stats.flushed++; G.stats.fwd++; }
+        G.buffer = [];
+    }
     if (G.connected && !G.forcedDown && t - G.lastHb >= 5) {
         G.lastHb = t;
         out1.push({ topic: 'seaguard/gateway/hb', payload: { t, ep, fwd: G.stats.fwd, buffered: G.buffer.length } });

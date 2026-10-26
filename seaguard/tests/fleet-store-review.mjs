@@ -1,0 +1,18 @@
+// Independent acceptance against actual fleet globals, not a hand-invented world.
+import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import assert from 'node:assert/strict';
+import fleet from '../src/fleet/persistence.cjs';
+const rows=[];const dir=path.resolve('seaguard/tests/fixtures/fleet-independent-review');fs.mkdirSync(dir,{recursive:true});
+function test(name,f){try{f();rows.push({name,passed:true});}catch(e){rows.push({name,passed:false,error:e.message});}}
+const actual=JSON.parse(fs.readFileSync('seaguard/tests/fixtures/fleet-live-globals.json'));
+const globals=Object.fromEntries(fleet.ALLOWLIST.globals.filter(k=>actual[k]!==undefined).map(k=>[k,actual[k]]));
+globals.simRunning=true;globals.simSpeed=1;
+test('Actual fleet global maps and nullable values encode and preserve exactly',()=>{const decoded=fleet.decode(fleet.encode({globals,nodes:{}}));assert.deepEqual(decoded.globals,globals);assert.ok(Object.keys(decoded.globals.fleet).length>0);});
+test('Actual data from a Node-RED-like VM realm survives storage serialization',()=>{const w=vm.runInNewContext('('+JSON.stringify({globals,nodes:{}})+')');const persisted=JSON.parse(JSON.stringify(fleet.encode(w)));assert.deepEqual(fleet.decode(persisted).globals,globals);});
+test('First nonempty saved world survives corrupt first primary',()=>{const s=fleet.createStore({dataDir:path.join(dir,'first')});assert.equal(s.save({globals,nodes:{}}).ok,true);fs.writeFileSync(path.join(dir,'first/fleet.json'),'{broken');const loaded=s.load();assert.equal(loaded.restored,true);assert.equal(loaded.data.globals.simTime,globals.simTime);assert.deepEqual(loaded.data.globals.syncStore,globals.syncStore);assert.equal(loaded.data.globals.simRunning,false);});
+test('In-flight notifications normalize consistently in global and node context',()=>{const rec={id:'review-uncertain',status:'SENDING',inflight:true,attempts:1,sentAt:3,deliveredAt:null,nextAt:3};const s=fleet.createStore({dataDir:path.join(dir,'uncertain')});const g={...globals,notifications:[rec]};assert.equal(s.save({globals:g,nodes:{fn0029:{S:{ep:g.epoch,list:[{...rec}]}}}}).ok,true);const loaded=s.load();assert.deepEqual(loaded.data.globals.notifications,loaded.data.nodes.fn0029.S.list);assert.equal(loaded.data.globals.notifications[0].status,'RETRY');});
+test('Cyclic arrays fail with a validation error instead of unbounded recursion',()=>{const a=[];a.push(a);assert.throws(()=>fleet.encode({globals:{...globals,eventLog:a},nodes:{}}),e=>e.code==='FLEET_SNAPSHOT_INVALID'&&!/call stack/i.test(e.message));});
+test('A corrupt present incident cannot pass validation and crash the restored engine',()=>{assert.throws(()=>fleet.encode({globals:{...globals,incidents:[null]},nodes:{}}),e=>e.code==='FLEET_SNAPSHOT_INVALID');});
+test('Trip accounting cannot claim records absent from the persisted sequence map',()=>{const bad={B1:{count:2,maxContig:2,dupRecords:0,batches:1,firstT:0,lastT:2,recs:{1:{t:1,lat:9,lon:79}}}};assert.throws(()=>fleet.encode({globals:{...globals,syncStore:bad},nodes:{}}),e=>e.code==='FLEET_SNAPSHOT_INVALID');});
+test('Delivered notification must have a real delivery timestamp',()=>{const n={id:'invalid-confirmed',status:'DELIVERED',attempts:1,inflight:false,created:0,sentAt:1,deliveredAt:null,nextAt:0};assert.throws(()=>fleet.encode({globals:{...globals,notifications:[n]},nodes:{}}),e=>e.code==='FLEET_SNAPSHOT_INVALID');});
+fs.writeFileSync('seaguard/reports/fleet-store-review.json',JSON.stringify({at:new Date().toISOString(),rows},null,2));
+for(const r of rows)console.log((r.passed?'PASS ':'FAIL ')+r.name+(r.error?' — '+r.error:''));process.exitCode=rows.some(r=>!r.passed)?1:0;

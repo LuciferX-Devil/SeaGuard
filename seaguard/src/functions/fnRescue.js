@@ -88,6 +88,12 @@ if (msg.topic === 'tick') {
             case 'reinforce':
                 ex.reinforce(S.state, S.ex, { teamId: c.teamId, personnel: c.personnel, recoveryKit: c.recoveryKit });
                 break;
+            case 'assistance':
+                ex.requestAssistance(S.state, S.ex, { helperId: c.helperId, personnel: c.personnel, recoveryKit: c.recoveryKit });
+                break;
+            case 'setRelay':
+                ex.setRelay(S.state, S.ex, { helperId: c.helperId === undefined ? null : c.helperId });
+                break;
             case 'command':
                 ex.command(S.state, S.ex, { teamId: c.teamId, action: c.action2 });
                 break;

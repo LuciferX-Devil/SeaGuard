@@ -4,6 +4,21 @@
 // Commands: {cmd:'start', speed} | {cmd:'stop'} | {cmd:'speed', speed} | {cmd:'resume'}
 const c = msg.payload || {};
 
+// Fleet persistence adapter (optional): the restored-pause hold is released ONLY
+// through runtime.resume(). A blocked (corrupt-store) adapter refuses the start so
+// the world stays frozen instead of running on unverified state. Without the
+// adapter the original clock behaviour is unchanged.
+function gateResume() {
+    const rt = global.get('fleetRuntime');
+    if (!rt || typeof rt.resume !== 'function') return true;
+    const r = rt.resume(global);
+    if (r && r.blocked) {
+        node.status({ fill: 'red', shape: 'ring', text: 'resume blocked: ' + (r.error || 'store error') });
+        return false;
+    }
+    return true;
+}
+
 function stop() {
     const h = context.get('handle');
     if (h) clearInterval(h);
@@ -26,8 +41,8 @@ function start(speed) {
     global.set('simSpeed', speed);
 }
 
-if (c.cmd === 'start') start(c.speed);
+if (c.cmd === 'start') { if (gateResume()) start(c.speed); }
 else if (c.cmd === 'stop') stop();
 else if (c.cmd === 'speed') { global.set('simSpeed', Number(c.speed)); if (global.get('simRunning')) start(c.speed); }
-else if (c.cmd === 'resume') start(global.get('simSpeed') || 1);
+else if (c.cmd === 'resume') { if (gateResume()) start(global.get('simSpeed') || 1); }
 return null;

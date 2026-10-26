@@ -51,7 +51,7 @@ if (typeof p === 'string') { try { p = JSON.parse(p); } catch (e) { return null;
 if (!p || typeof p !== 'object' || !p.b) return null;
 if (p.ep !== ep) { S.staleEpoch++; return null; }
 if (!cfg.fleet.some(b => b.id === p.b) || !['T', 'E'].includes(p.k) || !Number.isSafeInteger(p.s) || p.s < 1 || p.s > 10000000 || !Number.isFinite(p.t) || !Number.isFinite(p.la) || Math.abs(p.la) > 90 || !Number.isFinite(p.lo) || Math.abs(p.lo) > 180) return null;
-if (p.k === 'E' && (typeof p.eid !== 'string' || p.eid.length > 100 || !['CAPSIZE', 'FLOODING', 'MOB', 'SOS'].includes(p.ev))) return null;
+if (p.k === 'E' && (typeof p.eid !== 'string' || p.eid.length < 1 || p.eid.length > 100 || !['CAPSIZE', 'FLOODING', 'MOB', 'SOS'].includes(p.ev))) return null;
 
 const L = link(p.b);
 function ack() { out3.push({ topic: 'seaguard/down/' + p.b, payload: { k: 'A', b: p.b, ep, eid: p.eid } }); }

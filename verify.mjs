@@ -1,5 +1,1 @@
-import {spawnSync} from 'node:child_process';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-process.chdir(path.dirname(fileURLToPath(import.meta.url)));
-let failed=0;for(const n of ["rescue-battery","rescue-battery-controller","rescue-battery-integration","rescue-battery-state","rescue-model","rescue-exercise","rescue-persistence","rescue-review","regressions","outbox-regressions","dashboard-compile"]){console.log('\n'+n);const r=spawnSync(process.execPath,['seaguard/tests/'+n+'.mjs'],{stdio:'inherit'});if(r.status!==0)failed++;}process.exitCode=failed?1:0;
+import {spawnSync} from 'node:child_process';import {fileURLToPath} from 'node:url';process.chdir(fileURLToPath(new URL('.',import.meta.url)));let bad=0;for(const name of ["rescue-battery","rescue-model","rescue-battery-integration","rescue-battery-controller","rescue-battery-state","rescue-exercise","rescue-persistence","rescue-review","regressions","outbox-regressions","dashboard-compile","rescue-assistance","rescue-relay","fleet-persistence","fleet-store-review","fleet-runtime","fleet-wiring","fleet-control","fleet-delivery","fleet-results","fleet-shore-sets","visual-corrections"]){const r=spawnSync(process.execPath,['seaguard/tests/'+name+'.mjs'],{stdio:'inherit'});if(r.status!==0)bad++;}process.exitCode=bad?1:0;

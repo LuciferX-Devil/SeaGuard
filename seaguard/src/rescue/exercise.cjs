@@ -29,7 +29,6 @@
 
 'use strict';
 
-const DEMO_FEATURES = Object.freeze({nearbyAssistance:false, radioRelay:false});
 const model = require('./model.cjs');
 const energy = require('./battery.cjs');
 
@@ -145,7 +144,7 @@ function newExercise() {
 
 function createExercise(options = {}) {
     if (options === null || typeof options !== 'object') fail('create', 'options must be an object');
-    const harbour = options.harbour || { lat: 9.2876, lon: 79.3129 };
+    const harbour = options.harbour || { lat: 9.28, lon: 79.335 };
     if (!isCoord(harbour)) fail('create', 'harbour must be a valid coordinate');
     const teams = options.teams || undefined; // model defaults: T1/T2
     const shared = options.shared || { recoveryKits: 1 };
@@ -158,7 +157,7 @@ function createExercise(options = {}) {
     // Default world only: two finite nearby vessels at sea (IDLE = available).
     // Custom team sets are used as given — helpers are never injected.
     const helpers = [];
-    if (DEMO_FEATURES.nearbyAssistance && !options.teams) {
+    if (!options.teams) {
         for (const h of HELPER_TEAMS) {
             state.teams.push({
                 id: h.teamId, name: h.name, home: { ...harbour },
@@ -243,7 +242,11 @@ function start(state, ex, input) {
 }
 
 function reset(state, ex) {
-    const fresh = createExercise({ harbour: ex.harbour });
+    // A deliberate reset may update the retired illustrative default. Never move
+    // an in-progress restored exercise or a caller's custom launch coordinates.
+    const retiredDefault = ex.harbour.lat === 9.2876 && ex.harbour.lon === 79.3129;
+    const fresh = createExercise(retiredDefault ? {} : { harbour: ex.harbour });
+    state.harbour = { ...fresh.state.harbour };
     state.teams = fresh.state.teams;
     state.shared = fresh.state.shared;
     state.incidents = fresh.state.incidents;
@@ -421,7 +424,6 @@ function helperTeam(state, ex, helperId) {
 }
 
 function relayPath(state, ex) {
-    if (!DEMO_FEATURES.radioRelay) return {ok:false,reason:'Relay deferred in this demo'};
     // A valid short-range relay path needs: relay enabled on a KNOWN helper
     // whose radio is up, the helper healthy (fuel, not NO_FUEL), no outage on
     // the helper's channel, the helper within RELAY_VESSEL_KM of the vessel
@@ -446,7 +448,6 @@ function relayPath(state, ex) {
 }
 
 function requestAssistance(state, ex, input) {
-    if (!DEMO_FEATURES.nearbyAssistance) fail('requestAssistance', 'Feature deferred in this demo');
     ensureRunning(ex, 'requestAssistance');
     if (!input || typeof input !== 'object') fail('requestAssistance', 'input must be an object');
     const { helperId, personnel, recoveryKit } = input;
@@ -494,7 +495,6 @@ function requestAssistance(state, ex, input) {
 }
 
 function setRelay(state, ex, input) {
-    if (!DEMO_FEATURES.radioRelay) fail('setRelay', 'Feature deferred in this demo');
     ensureRunning(ex, 'setRelay');
     if (!input || typeof input !== 'object') fail('setRelay', 'input must be an object');
     const { helperId } = input;

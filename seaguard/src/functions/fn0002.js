@@ -14,10 +14,10 @@ const cfg = {
     // Telegram bot (optional). Leave token empty to keep everything on the local mock.
     // Test runs ALWAYS use the mock, so a real bot only receives live-mode alerts.
     telegram: {
-        enabled: false,
-        token: '',
-        familyChatId: '',
-        coastGuardChatId: ''
+        enabled: env.get('SEAGUARD_LIVE_TELEGRAM') === 'true',
+        token: env.get('TELEGRAM_BOT_TOKEN') || '',
+        familyChatId: env.get('TELEGRAM_FAMILY_CHAT') || '',
+        coastGuardChatId: env.get('TELEGRAM_COASTGUARD_CHAT') || ''
     },
 
     harbour: { name: 'Home harbour', lat: 9.2876, lon: 79.3129, wifiRadiusM: 400 },
@@ -156,7 +156,12 @@ function zoneOf(lat, lon) { return zoneOfXY(toXY(lat, lon)); }
 function zoneName(id) { const z = cfg.zones.find(z => z.id === id); return z ? z.name : id; }
 
 // Seeded PRNG (mulberry32) so a test campaign can be replayed from its seed.
-function rng(seed) {
+// When the fleet runtime adapter is present, delegate to its resumable rng (same
+// mulberry32 stream, resumable from a snapshot); otherwise fall back to the original
+// closure so standalone unit harnesses (no fleetRuntime global) keep working.
+function rng(seed, state) {
+    const fleetRuntime = global.get('fleetRuntime');
+    if (fleetRuntime && typeof fleetRuntime.rng === 'function') return fleetRuntime.rng(seed, state);
     let a = seed >>> 0;
     return function () {
         a |= 0; a = a + 0x6D2B79F5 | 0;
@@ -197,6 +202,27 @@ const lib = {
 global.set('cfg', cfg);
 global.set('lib', lib);
 if (global.get('epoch') === undefined) global.set('epoch', 0);
+
+// Fleet persistence bootstrap: restore the latest valid world snapshot (paused) or
+// confirm a clean fresh world. Only when the adapter is present (live Node-RED);
+// standalone harnesses skip this and keep the original live bootstrap.
+const fleetRuntime = global.get('fleetRuntime');
+if (fleetRuntime && typeof fleetRuntime.initialize === 'function') {
+    const init = fleetRuntime.initialize(global);
+    if (init && init.blocked) {
+        // Invalid snapshot: bootstrap + autosave blocked, visible error already
+        // surfaced in global.fleetSaveStatus. Emit nothing (no cmd live).
+        node.status({ fill: 'red', shape: 'dot', text: 'SeaGuard fleet store blocked' });
+        return null;
+    }
+    if (init && init.restored) {
+        // Restored world: skip cmd live (would erase recovery), keep epoch/time/
+        // layout/test metadata; simRunning already forced false by the runtime.
+        // Send ONLY clock stop so the clock control clears any running timer.
+        node.status({ fill: 'green', shape: 'dot', text: 'SeaGuard ' + cfg.version + ' configured (fleet restored)' });
+        return { topic: 'cmd', payload: { cmd: 'pause' } };
+    }
+}
 node.status({ fill: 'green', shape: 'dot', text: 'SeaGuard ' + cfg.version + ' configured' });
-// Start the system in live mode once configured.
+// Start the system in live mode once configured (fresh world only).
 return { topic: 'cmd', payload: { cmd: 'live' } };

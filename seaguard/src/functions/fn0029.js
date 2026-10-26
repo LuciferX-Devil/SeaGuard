@@ -22,7 +22,8 @@ function send(rec) {
         topic: 'send',
         url: live ? 'https://api.telegram.org/bot' + token + '/sendMessage'
             : cfg.baseUrl + '/mock-telegram/bot' + token + '/sendMessage',
-        headers: { 'content-type': 'application/json', 'x-seaguard-epoch': String(ep) },
+        headers: { 'content-type': 'application/json', 'x-seaguard-epoch': String(ep),
+            'x-seaguard-delivery-id': ep + ':' + rec.id }, // durable idempotency key: epoch + notification id
         requestTimeout: 8000,
         payload: { chat_id: rec.chat, text: rec.text },
         _nid: rec.id, _ep: ep
@@ -32,13 +33,14 @@ function send(rec) {
 if (msg.topic === 'notify') {
     const p = msg.payload;
     for (const role of p.roles) {
+        if (S.list.some(r => r.id === p.ref + '/' + role)) continue; // idempotent: never double-queue the same delivery
         S.list.push({ id: p.ref + '/' + role, ref: p.ref, incident: p.incident, kind: p.kind, role, chat: chatFor(role),
-            severity: p.severity, text: p.text, status: 'QUEUED', attempts: 0, created: t, nextAt: t, inflight: false, deliveredAt: null, lastError: null });
+            severity: p.severity, text: p.text, status: 'QUEUED', attempts: 0, created: t, nextAt: t, inflight: false, deliveredAt: null, lastError: null, deliveryUncertain: false });
     }
 } else if (msg.topic === 'test') {
     S.nextTestId = (S.nextTestId || 0) + 1;
     S.list.push({ id: 'TEST-' + t + '-' + S.nextTestId, ref: 'TEST', incident: null, kind: 'TEST', role: 'family', chat: chatFor('family'),
-        severity: 1, text: 'SeaGuard test message (' + (live ? 'live bot' : 'local mock') + ')', status: 'QUEUED', attempts: 0, created: t, nextAt: t, inflight: false, deliveredAt: null, lastError: null });
+        severity: 1, text: 'SeaGuard test message (' + (live ? 'live bot' : 'local mock') + ')', status: 'QUEUED', attempts: 0, created: t, nextAt: t, inflight: false, deliveredAt: null, lastError: null, deliveryUncertain: false });
 } else if (msg.topic === 'resp') {
     if (msg._ep === ep) {
         const rec = S.list.find(r => r.id === msg._nid);
@@ -46,8 +48,11 @@ if (msg.topic === 'notify') {
             rec.inflight = false;
             const body = msg.payload;
             const ok = msg.statusCode === 200 && body && body.ok;
-            if (ok) { rec.status = 'DELIVERED'; rec.deliveredAt = t; rec.lastError = null; }
+            if (ok) { rec.status = 'DELIVERED'; rec.deliveredAt = t; rec.lastError = null; rec.deliveryUncertain = false; }
             else {
+                // deliveryUncertain (set by the store at restore) is deliberately NOT
+                // touched here: a retry error only records THIS attempt's failure, the
+                // earlier in-flight attempt's outcome remains unknown.
                 rec.lastError = 'HTTP ' + (msg.statusCode || '?') + (body && body.description ? ' ' + body.description : '');
                 if (rec.attempts >= cfg.retry.maxNotifyTries) rec.status = 'FAILED';
                 else { rec.status = 'RETRY'; rec.nextAt = t + cfg.retry.notifyBackoff[Math.min(rec.attempts - 1, cfg.retry.notifyBackoff.length - 1)]; }
@@ -56,8 +61,13 @@ if (msg.topic === 'notify') {
     }
 } else if (msg.topic === 'tick') {
     for (const rec of S.list) {
-        if (rec.inflight && t - rec.sentAt > 20) { rec.inflight = false; rec.status = rec.attempts >= cfg.retry.maxNotifyTries ? 'FAILED' : 'RETRY'; rec.nextAt = t + 2; rec.lastError = 'no response'; }
-        if (!rec.inflight && (rec.status === 'QUEUED' || rec.status === 'RETRY') && t >= rec.nextAt) send(rec);
+        if (rec.inflight && t - rec.sentAt > 20) { rec.inflight = false; rec.status = rec.attempts >= cfg.retry.maxNotifyTries ? 'FAILED' : 'RETRY'; rec.nextAt = t + 2; rec.lastError = 'no response'; /* deliveryUncertain preserved */ }
+        if (!rec.inflight && (rec.status === 'QUEUED' || rec.status === 'RETRY')) {
+            // The retry budget is a hard cap even for records restored from a checkpoint: an
+            // exhausted budget terminates FAILED here instead of dispatching attempt max+1.
+            if (rec.attempts >= cfg.retry.maxNotifyTries) { rec.status = 'FAILED'; if (!rec.lastError) rec.lastError = 'retry budget exhausted'; /* deliveryUncertain preserved */ }
+            else if (t >= rec.nextAt) send(rec);
+        }
     }
 }
 

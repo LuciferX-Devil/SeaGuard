@@ -8,7 +8,7 @@
         <div v-if="p.guidance" class="sg-notice">{{ p.guidance }}</div>
         <div v-if="p.save && p.save.error" class="sg-notice" role="alert">Checkpoint failed: {{ p.save.error }}. The current exercise is still in memory.</div>
         <div v-if="p.running && p.paused" class="sg-notice" role="status">
-            Exercise paused{{ p.restored ? ' — restored from a durable checkpoint' : '' }}. Press Resume to continue.
+            {{ p.results && p.results.allClear ? 'Exercise complete — all teams are home. Start a new scenario when ready.' : (p.restored ? 'Saved exercise restored and paused. Press Resume to continue.' : 'Exercise paused. Press Resume to continue.') }}
         </div>
 
         <div class="sg-card" style="margin-bottom:.6rem">
@@ -44,9 +44,9 @@
                 <i :style="{width: (p.results.allClear ? 100 : 50) + '%'}"></i>
             </div>
             <div class="sg-sub" style="margin-top:.35rem" v-if="p.incident">
-                {{ p.incident.id }} · crew {{ p.incident.crewRescued }}/{{ p.incident.crewOnboard }} · water {{ p.incident.waterL.toFixed(1) }} L (ingress {{ p.incident.ingressLpm }} L/min) ·
-                <span :class="p.incident.status === 'RESOLVED' ? 'sg-pass' : 'sg-fail'">{{ p.incident.status.toLowerCase() }}</span>
-                <span v-if="p.incident.unsafe.length"> · unsafe: {{ p.incident.unsafe.join(', ') }}</span>
+                {{ p.incident.id }} · crew confirmed safe {{ p.incident.crewRescued }}/{{ p.incident.crewOnboard }} · water {{ p.incident.waterL.toFixed(1) }} L (ingress {{ p.incident.ingressLpm }} L/min) ·
+                <span :class="p.incident.status === 'RESOLVED' ? 'sg-pass' : 'sg-fail'">{{ p.incident.status === 'RESOLVED' ? 'crew safe' : p.incident.status.toLowerCase() }}</span>
+                <span v-if="p.incident.unsafe.length"> · unsafe: {{ p.incident.unsafe.map(h => ({CREW_UNRESCUED:'crew safety not yet confirmed',RADIO_DOWN:'vessel radio unavailable',FLOODING:'water level unsafe',BOUNDARY:'outside safe waters'}[h] || h.toLowerCase().replace(/_/g,' '))).join(', ') }}</span>
             </div>
         </div>
 
@@ -67,12 +67,58 @@
                     <button class="sg-btn" :disabled="!canDispatch || !p.missions.some(m => ['EN_ROUTE','ON_SCENE'].includes(m.status))" @click="cmd({action:'reinforce', teamId, personnel: manpower, recoveryKit: kit})">Reinforce</button>
                 </div>
                 <p class="sg-sub">Recovery kits available: {{ p.shared.recoveryKits.available }}. A team's boat must return before another mission can use it.</p>
+                <div v-if="p.helpers && p.helpers.length" class="sg-card" style="margin-bottom:.4rem">
+                    <b>Nearby vessels</b> <span class="sg-sub">— passing boats that can assist or relay radio (simulated, finite resources)</span>
+                    <table class="sg-table" style="margin-top:.3rem">
+                        <thead><tr><th>Vessel</th><th>Status</th><th>GPS</th><th>Distance</th><th>ETA on scene</th><th>Crew free</th><th>Fuel</th><th>Pump</th><th>Kit</th></tr></thead>
+                        <tbody>
+                            <tr v-for="h in p.helpers" :key="h.teamId">
+                                <td>{{ h.name }}<br><span class="sg-sub">{{ h.teamId }} · radio {{ h.radioUp ? 'up' : 'down' }}</span></td>
+                                <td :class="h.available ? 'sg-pass' : 'sg-fail'">{{ h.status.toLowerCase().replace(/_/g, ' ') }}</td>
+                                <td class="sg-sub">{{ h.gps ? Math.round(h.gps.ageS) + 's old' + (h.gps.stale ? ' (stale)' : '') : 'no fix' }}</td>
+                                <td class="sg-num">{{ h.distanceKm == null ? '—' : h.distanceKm + ' km' }}</td>
+                                <td class="sg-num">{{ h.etaS == null ? '—' : Math.ceil(h.etaS / 60) + ' min' }}</td>
+                                <td class="sg-num">{{ h.crewFree }}</td>
+                                <td class="sg-num">{{ h.fuelL.toFixed(0) }} L</td>
+                                <td class="sg-num">{{ h.pumpLpm }} L/min</td>
+                                <td class="sg-sub">{{ h.kitHeld ? 'held' : 'free' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-top:.35rem">
+                        <label class="sg-sub">Request assistance from
+                            <select class="sg-in" v-model="assist.helperId" :disabled="!p.running">
+                                <option value="">—</option>
+                                <option v-for="h in p.helpers" :key="h.teamId" :value="h.teamId" :disabled="!h.available">{{ h.name }}</option>
+                            </select>
+                        </label>
+                        <label class="sg-sub">Crew
+                            <input class="sg-in" type="number" style="width:3.5rem" v-model.number="assist.personnel" min="1" :max="assistHelper ? assistHelper.crewFree : 0" step="1" inputmode="numeric">
+                        </label>
+                        <label class="sg-sub"><input type="checkbox" v-model="assist.kit"> recovery kit</label>
+                        <button class="sg-btn go" :disabled="!canAssist" @click="cmd({action:'assistance', helperId: assist.helperId, personnel: assist.personnel, recoveryKit: assist.kit})">Request assistance</button>
+                    </div>
+                    <div v-if="p.relay" style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-top:.4rem;border-top:1px solid #d5e2e8;padding-top:.4rem">
+                        <label class="sg-sub">Short-range relay (backup sensor path — does not repair the main radio)
+                            <select class="sg-in" v-model="relaySel" :disabled="!p.running">
+                                <option value="">none</option>
+                                <option v-for="h in p.helpers" :key="h.teamId" :value="h.teamId">{{ h.name }}</option>
+                            </select>
+                        </label>
+                        <button class="sg-btn" :disabled="!p.running" @click="cmd({action:'setRelay', helperId: relaySel === '' ? null : relaySel})">Apply relay</button>
+                        <span :class="p.relay.enabled ? 'sg-pass' : 'sg-fail'">{{ p.relay.enabled ? 'relay path active' : 'relay path down' }}{{ p.relay.reason ? ' — ' + p.relay.reason : '' }}</span>
+                    </div>
+                    <p v-if="p.relay && p.relay.helperId" class="sg-sub">
+                        Relay {{ p.relay.distanceToVesselKm == null ? 'distance unmeasured' : p.relay.distanceToVesselKm + ' km from vessel' }}
+                        · reports held: {{ p.relay.backlog }} · relayed delivered: {{ p.relay.delivered }} · dropped: {{ p.relay.dropped }}
+                    </p>
+                </div>
                 <div v-for="t in p.teams" :key="t.id" class="sg-card" style="margin-bottom:.4rem">
                     <b>{{ t.id }} · {{ t.name }}</b> · {{ t.status.toLowerCase().replace(/_/g,' ') }} · fuel {{ t.fuelL.toFixed(1) }} L<br>
                     <span :class="t.telemetry.stale ? 'sg-fail' : 'sg-sub'">GPS: {{ t.telemetry.ageS == null ? 'awaiting first received fix' : Math.round(t.telemetry.ageS) + 's old' }}{{ t.telemetry.stale ? ' (unverified)' : '' }}</span>
                     · pump {{ t.pump.fault ? 'fault' : t.pump.running ? 'running' : 'off' }}<br>
                     <span :class="t.pump.battery.depleted || t.pump.battery.low ? 'sg-fail' : 'sg-sub'">battery (simulated) {{ t.pump.battery.chargeWh.toFixed(1) }}/{{ t.pump.battery.capacityWh }} Wh · {{ Math.round(t.pump.battery.percent * 100) }}%{{ t.pump.battery.depleted ? ' · DEPLETED' : t.pump.battery.low ? ' · LOW' : '' }} · est. run {{ t.pump.estimatedRunS == null ? '—' : Math.round(t.pump.estimatedRunS / 60) + ' min' }}{{ t.pump.recharge ? ' · replacement ' + Math.ceil(t.pump.recharge.remainingS) + 's left' : '' }}</span>
-                    <button v-if="t.status === 'IDLE' && !t.pump.recharge" class="sg-btn" style="margin-left:.4rem" :disabled="!p.running" title="Illustrative simulated battery replacement (60s)" @click="cmd({action:'recharge', teamId: t.id})">Replace battery (60s)</button>
+                    <button v-if="t.status === 'IDLE' && !t.pump.recharge" class="sg-btn" style="margin-left:.4rem" :disabled="!p.running || (t.helper && !t.atHome)" :title="(t.helper && !t.atHome) ? 'Helper is at sea — battery replacement only at the harbour (backend enforces the same check)' : 'Illustrative simulated battery replacement (60s)'" @click="cmd({action:'recharge', teamId: t.id})">Replace battery (60s){{ (t.helper && !t.atHome) ? ' (at sea)' : '' }}</button>
                 </div>
                 <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.4rem">
                     <button class="sg-btn" :disabled="!onScene || selectedTeam.pump.running" @click="cmd({action:'command', teamId, action2:'START_PUMP'})">Start pump</button>
@@ -112,7 +158,7 @@
                     </tbody>
                 </table>
 
-                <h3>Commands</h3>
+                <h3>Team radio commands</h3><p class="sg-sub">Pump and return instructions show delivery stages here. Dispatch and on-scene repairs are recorded in the timeline.</p>
                 <table class="sg-table">
                     <thead><tr><th>Cmd</th><th>Team</th><th>Action</th><th>Sent</th><th>Received</th><th>Executed</th><th>Confirmed</th><th>Stage</th></tr></thead>
                     <tbody>
@@ -134,14 +180,14 @@
             <div>
                 <h3>Rescue map</h3>
                 <button class="sg-btn" @click="cmd({action:'recenter'})">Centre rescue area</button>
-                <iframe title="Geographical rescue map" src="/rescue" style="width:100%;height:440px;border:1px solid #b9cdd6;background:#fff;margin-top:.4rem"></iframe>
+                <p v-if="mapNotice" class="sg-notice" role="status">{{ mapNotice }}</p><iframe @load="mapLoaded" title="Geographical rescue map" src="/rescue" style="width:100%;height:440px;border:1px solid #b9cdd6;background:#fff;margin-top:.4rem"></iframe>
                 <p class="sg-sub">Geographical tiles need internet access; a grey background means tiles are unavailable or loading. Positions and routes are simulated and not navigational data. Team markers use received GPS fixes; amber means stale. The casualty marker is the exercise distress location.</p>
                 <p v-if="p.sensors" :class="p.sensors.stale || p.sensors.disagreement ? 'sg-fail' : 'sg-sub'">Water telemetry: {{ p.sensors.waterAgeS == null ? 'awaiting report' : p.sensors.waterAgeS + 's old' }}{{ p.sensors.stale ? ' · stale' : '' }}{{ p.sensors.disagreement ? ' · differs from simulated instrument truth' : '' }}</p>
                 <h3>Timeline</h3>
                 <div class="sg-log sg-scroll">
                     <div v-for="(e, i) in timeline" :key="i">
-                        <span class="tt">t+{{ e.t }}s</span>
-                        <span class="sg-tag" :class="e.kind === 'REOPENED' || e.kind === 'NO_FUEL' || e.kind === 'CMD_FAILED' ? 'crit' : e.kind === 'RESOLVED' || e.kind === 'EXERCISE_COMPLETE' ? 'mag' : ''">{{ e.kind.toLowerCase().replace(/_/g, ' ') }}</span>
+                        <span class="tt">t+{{ Math.round(e.t) }}s</span>
+                        <span class="sg-tag" :class="e.kind === 'REOPENED' || e.kind === 'NO_FUEL' || e.kind === 'CMD_FAILED' ? 'crit' : e.kind === 'RESOLVED' || e.kind === 'EXERCISE_COMPLETE' ? 'mag' : ''">{{ e.kind === 'RESOLVED' ? 'crew safety confirmed' : e.kind.toLowerCase().replace(/_/g, ' ') }}</span>
                         <span v-if="e.detail && e.detail.team">team {{ e.detail.team }}</span>
                         <span v-if="e.detail && e.detail.mission"> {{ e.detail.mission }}</span>
                         <span v-if="e.detail && e.detail.kind"> {{ e.detail.kind }}={{ typeof e.detail.value === 'number' ? Number(e.detail.value.toFixed(1)) : e.detail.value }}</span>
@@ -163,10 +209,12 @@
                         <tbody>
                             <tr><td>First dispatch</td><td class="sg-num">{{ p.results.delays.dispatchS == null ? '—' : 't+' + p.results.delays.dispatchS + 's' }}</td></tr>
                             <tr><td>First arrival</td><td class="sg-num">{{ p.results.delays.arrivalS == null ? '—' : 't+' + p.results.delays.arrivalS + 's' }}</td></tr>
-                            <tr><td>Resolved</td><td class="sg-num">{{ p.results.delays.resolutionS == null ? '—' : 't+' + p.results.delays.resolutionS + 's' }}</td></tr>
+                            <tr><td>Crew safety confirmed</td><td class="sg-num">{{ p.results.delays.resolutionS == null ? '—' : 't+' + p.results.delays.resolutionS + 's' }}</td></tr>
                             <tr><td>Acknowledgement delay</td><td>{{ p.results.delays.acknowledgementS == null ? 'not acknowledged' : p.results.delays.acknowledgementS + 's' }}</td></tr>
                             <tr v-if="p.results.repair"><td>Hull repair</td><td>{{ p.results.repair.done ? 'done' : 'pending' }}</td></tr>
                             <tr v-if="p.results.radio"><td>Radio</td><td>{{ p.results.radio.restored ? 'restored' : 'down' }}</td></tr>
+                            <tr v-if="p.results.helpers"><td>Helper dispatches</td><td class="sg-num">{{ p.results.helpers.dispatches }}</td></tr>
+                            <tr v-if="p.results.relay"><td>Relayed sensor reports</td><td class="sg-num">{{ p.results.relay.delivered }} delivered · {{ p.results.relay.dropped }} dropped</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -180,7 +228,8 @@
 <script>
 export default {
     data() {
-        return { scenario: '', speed: 1, teamId: 'T1', manpower: 2, kit: true, pumpFault: false, outFrom: 0, outDur: 60 };
+        return { mapNotice: '', scenario: '', speed: 1, teamId: 'T1', manpower: 2, kit: true, pumpFault: false, outFrom: 0, outDur: 60,
+                 assist: { helperId: '', personnel: 1, kit: false }, relaySel: '' };
     },
     computed: {
         p() { return this.msg && this.msg.payload ? this.msg.payload : null; },
@@ -188,9 +237,50 @@ export default {
         ,selectedTeam() { return this.p && this.p.teams.find(t => t.id === this.teamId); }
         ,onScene() { return !!this.selectedTeam && this.selectedTeam.status === 'ON_SCENE'; }
         ,canDispatch() { return this.p && this.p.running && this.selectedTeam && this.selectedTeam.status === 'IDLE' && Number.isSafeInteger(this.manpower) && this.manpower > 0 && this.manpower <= this.selectedTeam.personnel.available && (!this.kit || this.p.shared.recoveryKits.available > 0) && this.p.incident && this.p.incident.status !== 'RESOLVED'; }
+        ,assistHelper() { return this.p && this.p.helpers ? this.p.helpers.find(h => h.teamId === this.assist.helperId) : null; }
+        ,canAssist() { return this.p && this.p.running && !this.p.paused && this.assistHelper && this.assistHelper.available && Number.isSafeInteger(this.assist.personnel) && this.assist.personnel >= 1 && this.assist.personnel <= this.assistHelper.crewFree && (!this.assist.kit || this.p.shared.recoveryKits.available > 0); }
     },
-    watch: { msg: { handler(m) { if(m && m.payload) { if(m.payload.scenario) this.scenario = m.payload.scenario; this.speed = m.payload.speed; } } } },
+    watch: { msg: { handler(m) { if(m && m.payload) { if(m.payload.scenario) this.scenario = m.payload.scenario; this.speed = m.payload.speed; if(m.payload.relay) this.relaySel = m.payload.relay.helperId || ''; } } } },
     methods: {
+        mapLoaded(event) {
+            const frame = event.target, key = 'seaguard.map.' + frame.getAttribute('src');
+            let attempts = 0;
+            const attach = () => {
+                if (!frame.isConnected) return;
+                const w = frame.contentWindow;
+                if (!w || !w.map || !w.basemaps || !w.basemaps.OSM) {
+                    if (++attempts < 50) setTimeout(attach, 100);
+                    else this.mapNotice = 'Map controls could not load. Refresh this page to retry.';
+                    return;
+                }
+                const map = w.map, layers = w.basemaps;
+                const select = name => {
+                    if (!layers[name]) name = 'OSM';
+                    for (const layer of Object.values(layers)) if (map.hasLayer(layer)) map.removeLayer(layer);
+                    layers[name].addTo(map);
+                    map.fire('baselayerchange', {name, layer: layers[name]});
+                };
+                let saved = 'OSM';
+                try { saved = localStorage.getItem(key) || 'OSM'; } catch {}
+                select(saved);
+                map.on('baselayerchange', e => {
+                    this.mapNotice = '';
+                    try { localStorage.setItem(key, e.name); } catch {}
+                });
+                for (const [name, layer] of Object.entries(layers)) {
+                    if (!layer.on) continue;
+                    layer.on('tileerror', () => {
+                        if (!map.hasLayer(layer)) return;
+                        if (name !== 'OSM') {
+                            select('OSM');
+                            this.mapNotice = 'The selected map could not load. OpenStreetMap is shown instead.';
+                        } else this.mapNotice = 'Map tiles are unavailable. Check your internet connection; vessel overlays remain visible.';
+                    });
+                }
+            };
+            // Wait for the map client to apply its initial server configuration.
+            setTimeout(attach, 1000);
+        },
         cmd(c) { this.send({ topic: 'cmd', payload: c }); }
     }
 };

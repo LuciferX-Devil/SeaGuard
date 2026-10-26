@@ -3,7 +3,11 @@
 // (delivery, deduplication, accounting, escalation policy) are checked as well.
 const cfg = global.get('cfg'), lib = global.get('lib');
 const T = global.get('test');
-if (!T || !T.schedule) return null;
+// Only a run that actually reached EVALUATING is evaluated. The first real
+// evaluation below sets T.state = 'DONE', so a duplicate evaluate (e.g. the
+// restored-evaluation re-emit racing the original) cannot append a second
+// history entry or overwrite results.
+if (!T || !T.schedule || T.state !== 'EVALUATING') return null;
 const D = T.D;
 const ev = (global.get('eventLog') || []);
 const incidents = global.get('incidents') || [];
@@ -308,7 +312,15 @@ if (hb) {
 const pass = rows.filter(r => r.result === 'PASS').length;
 const fail = rows.filter(r => r.result === 'FAIL').length;
 const skip = rows.filter(r => r.result === 'SKIP').length;
-T.results = { rows, pass, fail, skip, verdict: fail === 0 ? 'PASS' : 'FAIL', finishedWall: Date.now(), wallSec: Math.round((Date.now() - T.startedWall) / 1000) };
+// Honest campaign metrics with explicit denominators (standalone module inlined at build
+// time from src/fleet/results.cjs). A metrics failure must not break the oracle verdict.
+let metrics = null;
+try {
+    metrics = compute({ schedule: T.schedule, eventLog: ev, incidents, notifications: notes,
+        fw: global.get('fw') || {}, syncStore: global.get('syncStore') || {},
+        layout: T.layout || {}, D: D });
+} catch (e) { node.warn('campaign metrics failed: ' + e.message); }
+T.results = { rows, pass, fail, skip, verdict: fail === 0 ? 'PASS' : 'FAIL', finishedWall: Date.now(), wallSec: Math.round((Date.now() - T.startedWall) / 1000), metrics: metrics };
 T.state = 'DONE';
 T.history = (T.history || []);
 T.history.unshift({ seed: T.seed, faults: T.schedule.length, pass, fail, skip, verdict: T.results.verdict, when: new Date().toISOString().slice(11, 19), wallSec: T.results.wallSec });

@@ -1,40 +1,16 @@
-# SeaGuard demo — release verification and scope
+# SeaGuard 1.3 review build verification
 
-Frozen 2026-10-24 for Windows x64. Download **SeaGuard-Demo-Windows-x64-2026-10-24.zip** for the ready-to-run demo; extract it and run START.cmd. The automatically generated GitHub source archives require dependency installation and do not contain Node.js.
+The portable Windows package includes its runtime and dependencies. It contains project documentation and source code; private presentation notes, development logs, credentials and development checkpoints are excluded.
 
-## Verified on the actual frozen package
+Validation completed on 2026-10-26:
 
-| Check | Result |
-|---|---|
-| Standalone battery arithmetic | 18/18 pass |
-| Battery controller | 2/2 pass |
-| Battery/model integration | 9/9 pass |
-| Battery snapshot validation/migration | 10/10 pass |
-| Rescue model | 17/17 pass |
-| Rescue exercise | 11/11 pass |
-| Rescue persistence / backup recovery | 23/23 pass |
-| Rescue review regressions | 12/12 pass |
-| Fleet regressions | 28/28 pass |
-| Notification outbox regressions | 9/9 pass |
-| Vue/template/style syntax compilation | 10/10 pass |
-| Real local HTTP rejection/validation checks | 11/11 pass |
-| Real Node-RED rescue workflows | Flooding, man overboard, radio failure, boundary approach: all 4 pass |
-| Real Node-RED fleet campaigns | Seeds 0 and 42: 47 pass, 0 fail, 0 not exercised |
-| Real process restart using bundled Node | 6/6 pass: active mission saved, new process/paused restore, operational-state equality, no paused advancement, resumed command/recovery, return/resource release |
+- All22 bundled offline suites passed, including rescue resources, pump batteries, assistance, relay, checkpoint recovery, shore packet history, API logic, campaign metrics and dashboard compilation.
+- A fresh portable server started with dependency-locality checks enabled. It did not borrow packages from the development checkout.
+- Its actual HTTP/MQTT campaign (seed42) passed25 checks with0 failures and0 not-exercised checks.
+- Portable shutdown confirmed a fleet checkpoint before stopping.
+- The corrected working server passed47 checks across seeds0/42 with0 failures, plus4 assistance/relay checks and11 malformed-request rejection checks.
+- Map-selection persistence, tile-failure fallback and startup readiness responses passed focused behavior tests.
 
-Offline functional checks total 139 plus 10 template compilation checks. Raw JSON evidence is included under `seaguard/reports`. Live checks used an isolated loopback API server on port 1882. The default demo starts at 1880. MQTT clients and HTTP self-calls follow the configured demo port. Runtime rejects dependencies resolved outside the extracted demo folder; it must not borrow a development machine's parent node_modules.
+User screenshots confirm the architecture explanation stays inside its box, and the user confirms OSM loads and is selected by default. A restored old-coordinate rescue world was identified; explicit reset now updates only the retired default, keeping custom launch coordinates unchanged. Live API checks confirm the new team/casualty coordinates. The refreshed rescue screenshot confirms the launch and distress markers are offshore. Team markers were not visible at t+0; their positions were verified through the live API. This is a scoped desktop visual review, not exhaustive accessibility or responsive testing. The previous user test verified the rescue dispatch, radio repair, team return, resource release, all-clear and page-refresh flow. HTTP availability and source tests are not proof of visual layout or geographic correctness.
 
-Packaging validation initially exposed omitted npm packages whose names overlap Node built-ins, and MQTT clients pointing at the development broker. Both packaging issues were corrected. The final isolated campaigns and process restart passed. No failing campaign was relabelled as passing or removed from the development history; only final release evidence is bundled.
-
-## Included
-
-Five-vessel fleet simulation, real local MQTT/WebSocket and HTTP flows, simulated edge sensors/radio/weather, mock alert delivery, duplicate-safe trip upload, seeded fault campaigns, four interactive rescue scenarios, constrained teams/manpower/equipment, delayed commands and feedback, finite pump batteries, delayed harbour battery replacement, timelines/results and durable rescue checkpoints with paused recovery.
-
-## Pending / excluded
-
-- Nearby-vessel assistance and relay are disabled in this frozen demo. Heretic completed a development checkpoint reporting green scoped tests, but independent acceptance and deployment remain pending.
-- Fleet incident/trip/pending-alert durability and complete missed-emergency/recovered-trip results remain next-sprint work.
-- Rendered UI/map acceptance was not exercised because browser origin access was denied. Template compilation and API tests do not replace it. Inspect the actual pages before a presentation.
-- No field/hardware validation, real LoRaWAN deployment, real emergency dispatch or real messaging is claimed. Map tiles require internet.
-
-Development is paused and checkpointed separately. This release has no Unsloth dependency, AI bridge, API token, live Telegram credential, development snapshot or GPU project. It is a review/demo prerelease, not an operational safety product. See README.md for the complete walkthrough, architecture, protocols and roadmap.
+This is a simulated educational prototype, not field-validated navigation or emergency equipment. Live messaging and live weather are disabled in the portable launcher. Internet is needed only for geographical map tiles.

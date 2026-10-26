@@ -1,0 +1,228 @@
+{
+  "format": "seaguard.fleet",
+  "version": 1,
+  "savedAt": 1750000000000,
+  "globals": {
+    "epoch": 4,
+    "simTime": 7200,
+    "simSpeed": 1,
+    "simRunning": false,
+    "mode": "test",
+    "runSeed": 77,
+    "notifications": [
+      {
+        "id": "INC-9/family",
+        "ref": "INC-9",
+        "incident": "INC-9",
+        "kind": "SOS",
+        "role": "family",
+        "chat": "family-demo",
+        "severity": 3,
+        "text": "sos",
+        "status": "RETRY",
+        "attempts": 2,
+        "created": 7180,
+        "nextAt": 7205,
+        "inflight": false,
+        "deliveredAt": null,
+        "lastError": "no response"
+      },
+      {
+        "id": "INC-9/coastguard",
+        "ref": "INC-9",
+        "incident": "INC-9",
+        "kind": "SOS",
+        "role": "coastguard",
+        "chat": "coastguard-demo",
+        "severity": 3,
+        "text": "sos",
+        "status": "DELIVERED",
+        "attempts": 1,
+        "created": 7180,
+        "nextAt": 7180,
+        "sentAt": 7190,
+        "inflight": false,
+        "deliveredAt": 7191,
+        "lastError": null
+      },
+      {
+        "id": "INC-10/family",
+        "ref": "INC-10",
+        "incident": "INC-10",
+        "kind": "FLOOD",
+        "role": "family",
+        "chat": "family-demo",
+        "severity": 2,
+        "text": "flood",
+        "status": "QUEUED",
+        "attempts": 0,
+        "created": 7200,
+        "nextAt": 7200,
+        "inflight": false,
+        "deliveredAt": null,
+        "lastError": null
+      }
+    ],
+    "syncStore": {
+      "B2": {
+        "count": 3,
+        "maxContig": 3,
+        "dupRecords": 1,
+        "batches": 2,
+        "firstT": 5,
+        "lastT": 15,
+        "recs": {
+          "1": {
+            "t": 5,
+            "lat": 51.1,
+            "lon": 0.2
+          },
+          "2": {
+            "t": 10,
+            "lat": 51.11,
+            "lon": 0.21
+          },
+          "3": {
+            "t": 15,
+            "lat": 51.12,
+            "lon": 0.22
+          }
+        }
+      }
+    },
+    "incidents": [
+      {
+        "id": "INC-9",
+        "kind": "SOS",
+        "boat": "B2",
+        "opened": 7180,
+        "lastEventT": 7180,
+        "events": [
+          {
+            "t": 7180,
+            "type": "SOS",
+            "source": "onboard",
+            "eid": null,
+            "data": {}
+          }
+        ],
+        "status": "OPEN"
+      }
+    ]
+  },
+  "nodes": {
+    "fn0006": {
+      "S": {
+        "ep": 4,
+        "boats": {
+          "B2": {
+            "id": "B2",
+            "seq": 4,
+            "lastTelem": 7150,
+            "hold": {
+              "roll": 0,
+              "flood": 0
+            },
+            "latched": {
+              "capsize": false,
+              "flood": true
+            },
+            "tags": [],
+            "evN": 2,
+            "pending": [
+              {
+                "eid": "E7",
+                "pkt": {
+                  "ev": "FLOOD",
+                  "t": 7180
+                },
+                "tries": 2
+              }
+            ],
+            "log": [
+              {
+                "s": 1,
+                "t": 5,
+                "lat": 51.1,
+                "lon": 0.2,
+                "spd": 1,
+                "roll": 0,
+                "lvl": 2,
+                "bat": 12.5,
+                "crew": 2
+              },
+              {
+                "s": 2,
+                "t": 10,
+                "lat": 51.11,
+                "lon": 0.21,
+                "spd": 1,
+                "roll": 0,
+                "lvl": 2,
+                "bat": 12.5,
+                "crew": 2
+              },
+              {
+                "s": 3,
+                "t": 15,
+                "lat": 51.12,
+                "lon": 0.22,
+                "spd": 1,
+                "roll": 0,
+                "lvl": 2,
+                "bat": 12.4,
+                "crew": 2
+              }
+            ],
+            "logSeq": 4,
+            "acked": 3,
+            "inflight": null,
+            "batchN": 2,
+            "adv": null,
+            "advCount": 0,
+            "stats": {
+              "sent": 2,
+              "retries": 1,
+              "acked": 3,
+              "gaveUp": 0,
+              "rttSum": 2,
+              "rttN": 2,
+              "dupAcks": 0,
+              "filtered": {
+                "roll": 0,
+                "splash": 0,
+                "tag": 0
+              },
+              "syncBatches": 2,
+              "syncTimeouts": 0,
+              "syncErrors": 0
+            }
+          }
+        }
+      }
+    },
+    "fn0010": {
+      "G": {
+        "connected": true,
+        "forcedDown": false,
+        "ep": 4,
+        "buffer": [],
+        "stats": {
+          "fwd": 9,
+          "buffered": 0,
+          "bufDropped": 0,
+          "flushed": 0,
+          "down": 0
+        },
+        "lastHb": 7190
+      }
+    },
+    "fn0020": {
+      "M": {
+        "online": true,
+        "lastHb": 7190,
+        "reason": "heartbeat"
+      }
+    }
+  }
+}

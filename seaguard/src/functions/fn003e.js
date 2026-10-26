@@ -202,6 +202,12 @@ function describe(f) {
 }
 
 function clearWorld() {
+    // Deliberate run/live reset: let the persistence adapter release the
+    // restored-pause hold and drop saved context caches so a fresh world can be
+    // saved over them (also clears a corrupt-store block). Only called on explicit
+    // operator reset - never at restored-config bootstrap.
+    const rt = global.get('fleetRuntime');
+    if (rt && typeof rt.newWorld === 'function') rt.newWorld(global);
     for (const k of ['faults', 'incidents', 'eventLog', 'suppressions', 'linkLog', 'linkHist', 'chan', 'mockTelegram',
         'syncStore', 'fleet', 'fw', 'truth', 'geo', 'weather', 'seaState', 'notifications', 'corr', 'linkShore', 'gateway'])
         global.set(k, undefined);
@@ -214,6 +220,10 @@ if (msg.topic === 'cmd' && c.cmd === 'live') {
     global.set('epoch', (global.get('epoch') || 0) + 1);
     clearWorld();
     global.set('mode', 'live');
+    // Explicit reset freezes the clock state (also for corrupt-store recovery,
+    // where the clock control is held and never ran): the emitted start command
+    // below re-runs it through the clock control, which sets simRunning=true.
+    global.set('simRunning', false);
     global.set('simTime', 0);
     global.set('faults', []);
     global.set('layout', liveLayout());
@@ -232,6 +242,8 @@ if (msg.topic === 'cmd' && c.cmd === 'run') {
     clearWorld();
     global.set('runSeed', seed);
     global.set('mode', 'test');
+    // Same explicit freeze as the live reset: the start command re-runs the clock.
+    global.set('simRunning', false);
     global.set('simTime', 0);
     global.set('faults', []);
     global.set('layout', g.layout);
@@ -285,6 +297,17 @@ if (msg.topic === 'cmd' && c.cmd === 'inject') {
         global.set('test', T);
     }
     return null;
+}
+
+// A run that reached EVALUATING and was interrupted by a restart: the clock is
+// already stopped and the oracle never ran. Re-emit the SAME evaluate request the
+// normal end-of-run path emits - no simTime advance, no fabricated results. The
+// oracle (fn003d) only acts while T.state === 'EVALUATING' and sets DONE, so a
+// duplicate evaluate cannot append duplicate history.
+if (msg.topic === 'cmd' && c.cmd === 'finishRestoredEvaluation') {
+    if (T.state !== 'EVALUATING') return null;
+    out3.push({ topic: 'evaluate', payload: { seed: T.seed } });
+    return [null, null, out3.length ? out3 : null];
 }
 
 if (msg.topic === 'tick' && T.state === 'RUNNING') {

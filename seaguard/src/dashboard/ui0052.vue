@@ -9,12 +9,17 @@
             <button class="sg-btn" @click="cmd({cmd: p.head.running ? 'pause' : 'resume'})">{{ p.head.running ? 'Pause' : 'Resume' }}</button>
             <button v-for="s in [1,5,10,20]" :key="s" class="sg-btn" :class="{on: p.head.speed == s}" @click="cmd({cmd:'speed', speed:s})">&times;{{ s }}</button>
             <button class="sg-btn" @click="cmd({cmd:'live'})">Restart simulation</button>
+            <button class="sg-btn" @click="cmd({cmd:'save'})">Save fleet checkpoint</button>
+            <span class="sg-sub" v-if="p.head.save && saveTime(p.head.save.savedAt)">checkpoint {{ saveTime(p.head.save.savedAt) }} UTC</span>
         </div>
         <div class="sg-notice">Simulation only · Boat positions, maritime boundaries and emergencies are illustrative. Alerts use the local mock unless live messaging is explicitly enabled.</div>
+        <div class="sg-notice" v-if="p.head.save && p.head.save.blocked" role="alert">Fleet store blocked: {{ p.head.save.error || 'invalid snapshot' }}. The world is frozen and checkpoints are refused; use "Restart simulation" to deliberately reset it.</div>
+        <div class="sg-notice" v-else-if="p.head.save && p.head.save.pausedHold && !p.head.running">Restored world is paused at t+{{ p.head.t }} s. Press Resume to continue from the saved state.</div>
+        <div class="sg-notice" v-else-if="p.head.save && !p.head.save.ok && !p.head.save.blocked" role="alert">Fleet checkpoint save failed: {{ p.head.save.error }}. Live state is kept; the last good checkpoint is unchanged.</div>
 
         <div class="sg-kpis">
             <div class="sg-kpi"><b class="sg-num">{{ p.kpi.atSea }}</b><span>boats at sea</span></div>
-            <div class="sg-kpi" :class="p.kpi.critical ? 'alert' : ''"><b class="sg-num">{{ p.kpi.open }}</b><span>open incidents</span></div>
+            <div class="sg-kpi" :class="p.kpi.critical ? 'alert' : ''"><b class="sg-num">{{ p.kpi.open }}</b><span>unresolved incidents</span></div>
             <div class="sg-kpi" :class="p.kpi.critical ? 'alert' : ''"><b class="sg-num">{{ p.kpi.critical }}</b><span>critical</span></div>
             <div class="sg-kpi" :class="p.kpi.gateway === 'offline' ? 'warn' : ''"><b>{{ p.kpi.gateway }}</b><span>shore gateway</span></div>
             <div class="sg-kpi" :class="p.kpi.storms ? 'warn' : ''"><b>{{ p.kpi.storms ? p.kpi.storms + ' storm' : p.kpi.weather.toLowerCase() }}</b><span>weather feed</span></div>
@@ -74,6 +79,24 @@
         },
         methods: {
             cmd(c) { this.send({ topic: 'cmd', payload: c }); },
+            // fleetSaveStatus.savedAt is numeric Date.now() ms from persistence.save (0 is a
+            // valid timestamp); legacy/ISO strings are tolerated. Returns '' for anything unusable.
+            saveTime(ts) {
+                if (ts === null || ts === undefined) return '';
+                let d;
+                if (typeof ts === 'number') {
+                    if (!Number.isFinite(ts) || ts < 0) return '';
+                    d = new Date(ts);
+                } else if (typeof ts === 'string') {
+                    const s = ts.trim();
+                    if (!s) return '';
+                    d = /^\d+$/.test(s) ? new Date(Number(s)) : new Date(s);
+                } else { return ''; }
+                if (isNaN(d.getTime())) return '';
+                const p = (n) => String(n).padStart(2, '0');
+                return d.getUTCFullYear() + '-' + p(d.getUTCMonth() + 1) + '-' + p(d.getUTCDate()) + ' ' +
+                    p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
+            },
             err(b) {
                 if (!b.shore.lat || !b.truth.lat) return '-';
                 const dy = (b.truth.lat - b.shore.lat) * 111320;

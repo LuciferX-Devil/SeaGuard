@@ -1,15 +1,17 @@
 {
-  "builtAt": "2026-10-24T08:20:37.011Z",
+  "version": "1.3.0",
+  "builtAt": "2026-10-26T06:23:34.919Z",
   "platform": "Windows x64",
   "node": "v24.22.1",
-  "freeze": "Active reviewed battery-stage flow/UI, copied controller with unfinished assistance/relay disabled",
-  "excluded": [
-    "credentials",
-    "development snapshots",
-    "Unsloth",
-    "GPU project",
-    "Tri-Mode",
-    "unverified assistance/relay UI"
+  "localServicesOnly": true,
+  "features": [
+    "fleet checkpoint recovery",
+    "rescue dispatch",
+    "pump batteries",
+    "nearby assistance",
+    "radio relay",
+    "campaign results"
   ],
-  "visualAcceptance": "not exercised: browser permission denied"
+  "visualAcceptance": "User screenshots: architecture text contained; Chart OSM default/tile loading confirmed; rescue launch and distress markers visibly offshore. Team coordinates checked through live API; exhaustive responsive/accessibility testing not performed.",
+  "releaseVersion": "v1.3.0"
 }
